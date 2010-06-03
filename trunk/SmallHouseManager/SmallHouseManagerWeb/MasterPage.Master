@@ -1,0 +1,61 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="MasterPage.Master.cs" Inherits="SmallHouseManagerWeb.Site1" %>
+<%@ Register src="UserControl/Login.ascx" tagname="Login" tagprefix="uc1" %>
+<%@ Register src="UserControl/BaseInfo.ascx" tagname="BaseInfo" tagprefix="uc2" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312" />    
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server">
+    </asp:ContentPlaceHolder>
+    <link href="Css/MasterPage.css" rel="Stylesheet" type="text/css" />
+    <link href="Css/Main.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<form id="form1" runat="server">
+<div id="content">
+    <div id="head">        
+        <div id="logo">            
+            <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0"  width="759" height="75">                    
+                    <param name="movie" value="Flash\logo.swf" />
+                    <param name="quality" value="high"/>
+                    <param name="bgcolor" value="#990000" />
+                    <embed src="Flash/logo.swf" quality="high" bgcolor="#990000" width="759" 
+                        height="75" align="middle" allowscriptaccess="sameDomain" 
+                        type="application/x-shockwave-flash" 
+                        pluginspage="http://www.macromedia.com/go/getflashplayer" />
+            </object>
+        </div>
+        <div id="sitebar">
+            <div id="left"></div>
+            <div class="menu"><div class="menutext"><a href="Default.aspx">首页</a></div></div>
+            <div class="menu"><div class="menutext"><a href="ShowNews.aspx">物业公告</a></div></div>
+            <div class="menu"><div class="menutext"><a href="AreaAfact.aspx">小区设施</a></div></div>
+            <div class="menu"><div class="menutext"><a href="EmployeeInfo.aspx">物管人员</a></div></div>
+            <div class="menu"><div class="menutext"><a href="HouseIntroduce.aspx">小区介绍</a></div></div>
+            <div class="menu"><div class="menutext"><a href="AboutUs.aspx">关于我们</a></div></div>
+        </div>
+        <div id="line">
+            <div id="left1"></div>
+            <div id="right"></div>
+        </div>
+   </div>    
+    <div id="main">        
+        <div id="mainleft">
+            <div id="pic"></div>
+            <div>  
+                <uc1:Login ID="Login1" runat="server" />  
+                <uc2:BaseInfo ID="BaseInfo1" runat="server" />                       
+            </div>
+        </div>
+        <div id="mainright">
+            <asp:ContentPlaceHolder ID="RightContent" runat="server"></asp:ContentPlaceHolder>
+        </div>       
+    </div>
+    <div id="footer">
+        <div>Copyright@2008-2009 邓啟彬：毕业设计<br />Email：<a href="mailto:dengqibin@qq.com">dengqibin@qq.com</a>&nbsp;&nbsp;QQ：418338839</div>
+    </div>    
+</div>
+</form>
+</body>
+</html>

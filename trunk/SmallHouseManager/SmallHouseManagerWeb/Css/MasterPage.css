@@ -1,0 +1,199 @@
+﻿body
+{
+	background: url(  '../Images/bg.jpg' );
+	background-repeat: repeat;
+	font-size: 12px;
+	color:#4D4D4D;
+	width:759px;
+	position:absolute;	
+	padding-left:50%;
+	left:-380px;
+	height:100%;
+	margin-top:0px;	
+}
+#content
+{
+	min-height:100%;
+	position:relative;
+}
+#main
+{
+	width:759px;
+	margin-bottom:85px;
+}
+#mainleft
+{
+	float:left;
+	width:233px;
+}
+#pic
+{
+	background-image: url( '../Images/qy11_11.gif' );
+	height:90px;
+}
+#mainright
+{
+	float:left;
+	width:526px;
+}
+#logo
+{
+	height:75px;
+}
+#left
+{
+	float:left;	
+	background-image: url( '../Images/qy11_06_01.gif' );
+	width:321px;
+	height:27px;
+}
+#sitebar
+{
+	width:759px;
+	height:27px;
+}
+.menu
+{
+	float: left;
+	background-image: url( '../Images/qy11_08.gif' );
+	width:73px;
+	height:27px;
+	text-align:center;
+	vertical-align:bottom;
+}
+.menutext
+{
+	padding-top:7px;
+}
+a
+{
+	color:#4D4D4D;
+	text-decoration:none;
+}
+a:hover
+{
+	color:#FF9834;
+	text-decoration:none;
+}
+#line
+{
+	width:759px;
+	height:26px;
+}
+#left1
+{
+	float:left;	
+	background-image: url( '../Images/qy11_06_02.gif' );
+	width:321px;
+	height:26px;
+}
+#right
+{
+	float:right;	
+	background-image: url( '../Images/qy11_10.gif' );
+	width:438px;
+	height:26px;
+}
+
+#footer
+{
+	background-image: url('../Images/qy11_37.gif');
+	width: 759px;
+	height: 81px;
+	position:absolute;
+	bottom:0px;
+}
+#footer div
+{
+	text-align: center;
+	padding-top: 17px;
+	font-family: 宋体;
+	font-size: 23px;
+}
+.loginning
+{
+	width:233px;
+	height:140px;
+	margin:0px;
+	background-image:url('../Images/login_user.gif');
+}
+.row
+{
+	clear:both;
+	width:223px;
+	padding-left:5px;
+	padding-top:9px;
+	font-size:14px;
+	font-weight:bold;
+}
+.name
+{
+	float:left;
+	width:60px;	
+	color:#4D4D4D;
+	text-align:right;
+	padding-top:4px;
+}
+.text
+{
+	float:left;
+	width:88px;
+	height:23px;
+	color:Black;
+	overflow:hidden;
+}
+.welcome
+{
+	text-align:center;
+}
+#login_line
+{
+	line-height:33px;
+}
+#confirm
+{
+	float: left;
+	width: 56px;
+	height: 24px;
+	display:inline;
+	margin-left: 83px;
+}
+.checkcode
+{
+	width:36px;
+}
+#code
+{
+	float:left;
+	padding-left:2px;
+	width:42px;
+}
+.check
+{
+	float:right;
+	width:60px;
+	height:20px;
+	overflow:hidden;
+	padding-top:2px;
+}
+#information
+{
+	width:233px;
+	height:25px;
+	margin-top:5px;
+	background-image:url('../Images/qy11_16.gif');
+}
+#contact
+{
+	width:233px;
+	height:25px;
+	margin-top:5px;
+	background-image:url('../Images/qy11_17.gif');
+}
+.basetext
+{
+	width:223px;
+	height:12px;
+	padding-top:5px;
+	padding-left:10px;
+}

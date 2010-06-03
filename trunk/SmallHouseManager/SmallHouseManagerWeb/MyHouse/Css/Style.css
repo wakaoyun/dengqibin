@@ -1,0 +1,56 @@
+﻿.info_lines
+{
+	height:27px;
+	width:795px;
+}
+.info_title
+{
+	float:left;
+	width:280px;
+	height:27px;
+	line-height:27px;
+	text-align:right;
+	border-right-width:1px;
+	border-right-style:solid;
+	border-right-color:#b3cde8;
+}
+.info_text
+{
+	float:left;
+	line-height:27px;
+	padding-left:5px;
+}
+.reporttext
+{
+	height:138px;
+}
+.repair_title
+{
+	float:left;
+	width:100px;
+	height:27px;
+	line-height:27px;
+	text-align:right;	
+}
+.repair_text
+{
+	float:left;
+	line-height:27px;
+	padding-left:5px;
+	border-left-width:1px;
+	border-left-style:solid;
+	border-left-color:#b3cde8;
+}
+#homefree
+{
+	color:Red;
+}
+#homereport
+{
+	line-height:27px;
+}
+#homereport a
+{
+	text-decoration:none;
+	color:Red;
+}
