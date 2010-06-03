@@ -1,0 +1,23 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Master.master.cs" Inherits="SmallHouseManagerWeb.Master" %>
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
+    <link href="Css/Master.css" rel="Stylesheet" type="text/css" />
+    <link href="MyHouse/Css/Style.css" rel="stylesheet" type="text/css" />
+    <link href="Admin/Css/Style.css" rel="stylesheet" type="text/css" />
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+<form id="form1" runat="server">
+    <div id="content">
+        <div id="top_left"><div id="top_right"></div></div>
+        <div id="middle_left">
+            <div class="middle_right titles"><asp:ContentPlaceHolder ID="TitleContentPlaceHolder" runat="server"></asp:ContentPlaceHolder></div>            
+            <div id="contenttext" class="middle_right"><asp:ContentPlaceHolder ID="ContentPlaceHolder" runat="server"></asp:ContentPlaceHolder></div>
+        </div>
+        <div id="bottom_left"><span id="bottom_right"></span></div>
+    </div>
+</form>   
+</body>
+</html>

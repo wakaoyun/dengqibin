@@ -1,0 +1,203 @@
+﻿#headimg
+{
+	width:526px;
+	height:29px;
+	background-image:url('../Images/qy11_120.gif');
+}
+#headtext
+{
+	width:300px;
+	height:14px;
+	font-size:14px;
+	font-weight:bold;
+	padding-left:30px;
+	padding-top:6px;
+}
+#flash
+{
+	width:524px;
+	padding-left:2px;
+}
+#newsimg
+{
+	width:106px;
+	height:21px;
+	background-image:url('../Images/qy11_20.gif');
+}
+#newstitle
+{
+	float:left;
+	width:446px;
+	padding-top:5px;
+	padding-left:20px;
+	text-overflow:ellipsis;
+}
+#newsdate
+{
+	float:right;
+	width:60px;
+	padding-top:5px;
+}
+.newscenter
+{
+	width:521px;
+	padding-left:5px;
+	text-align:center;
+}
+#newtitle
+{
+	font-size:x-large;
+}
+#newtitle
+{
+	padding-top:5px;
+}
+#newscontent
+{
+	padding-left:5px;
+	width:521px;
+}
+#adminimg
+{
+	width:106px;
+	height:21px;
+	margin-top:5px;
+	background-image:url('../Images/qy11_21.gif');
+}
+#navigatecount
+{
+	float:left;
+	width:150px;
+	padding-left:50px;
+	margin-top:10px;
+}
+#navigate
+{
+	float:right;
+	width:140px;
+	padding-right:50px;
+	margin-top:10px;
+}
+#RollPic
+{
+	width:521px;
+	overflow:hidden;
+}
+#RollContent
+{
+	width:5500px;
+}
+#RollPic1
+{
+	float:left;
+	width:521px;
+	overflow:hidden;
+}
+#RollPic2
+{
+	float:left;
+	width:0px;
+}
+.employeeimg
+{
+	width:80px;
+	height:80px;
+}
+.employeetext
+{
+	width:130px;
+}
+.employeecontent
+{
+	float:left;
+	padding-top:3px;
+}
+.employeeimg1
+{
+	width:124px;
+	height:124px;
+}
+.employeeitem
+{
+	padding-left:3px;
+	width:132px;
+	height:25px;
+}
+#employee
+{
+	padding-left:5px;
+}
+#fact_top
+{
+	width:526px;
+	height:43px;
+	background-image:url('../Images/areafact_01.gif');
+}
+#introduce_top
+{
+	width:526px;
+	height:43px;
+	background-image:url('../Images/baseinfo_01.gif');
+}
+#fact_middle_left
+{
+	background-image:url('../Images/areafact_02.gif');
+	background-repeat:repeat-y;
+	background-position:left;
+}
+#fact_middle_right
+{
+	background-image:url('../Images/areafact_03.gif');
+	background-repeat:repeat-y;
+	background-position:right;
+}
+#fact_bottom
+{
+	width:526px;
+	height:24px;
+	background-image:url('../Images/areafact_04.gif');
+}
+#fact_content
+{
+	width:483px;
+	padding-left:21px;
+}
+.fact_lines
+{
+	width:483px;
+	padding-top:5px;
+}
+.fact_title
+{
+	float:left;
+	width:60px;
+	height:15px;
+	color:#ff9933;
+}
+.fact_text
+{
+	float:left;
+	width:423px;
+}
+.dashline
+{
+	clear:both;
+	border-bottom-width:1px;
+	border-bottom-style:dashed;
+	border-bottom-color:#4D4D4D;
+}
+#aboutustext
+{
+	width:516px;
+	padding-left:10px;
+}
+#aboutuscontact
+{
+	width:250px;
+	height:56px;
+	margin-top:5px;
+	margin-left:10px;
+	border-width:1px;
+	border-style:dashed;
+	border-color:#4D4D4D;
+}

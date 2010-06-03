@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmallHouseManagerWeb", "SmallHouseManagerWeb\SmallHouseManagerWeb.csproj", "{B0361105-B160-4C02-87A9-A18ACC7C035C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmallHouseManagerDAL", "SmallHouseManagerDAL\SmallHouseManagerDAL.csproj", "{9DCD9ADF-6FBC-4DF3-82C9-B8C58836487C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmallHouseManagerBLL", "SmallHouseManagerBLL\SmallHouseManagerBLL.csproj", "{FA866821-FA57-41B5-9B38-C45BB70A9C1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmallHouseManagerModel", "SmallHouseManagerModel\SmallHouseManagerModel.csproj", "{BC722905-529B-43E2-9578-290450DFCD10}"
+EndProject
+Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B0361105-B160-4C02-87A9-A18ACC7C035C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0361105-B160-4C02-87A9-A18ACC7C035C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0361105-B160-4C02-87A9-A18ACC7C035C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0361105-B160-4C02-87A9-A18ACC7C035C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DCD9ADF-6FBC-4DF3-82C9-B8C58836487C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DCD9ADF-6FBC-4DF3-82C9-B8C58836487C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DCD9ADF-6FBC-4DF3-82C9-B8C58836487C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DCD9ADF-6FBC-4DF3-82C9-B8C58836487C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA866821-FA57-41B5-9B38-C45BB70A9C1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA866821-FA57-41B5-9B38-C45BB70A9C1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA866821-FA57-41B5-9B38-C45BB70A9C1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA866821-FA57-41B5-9B38-C45BB70A9C1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC722905-529B-43E2-9578-290450DFCD10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC722905-529B-43E2-9578-290450DFCD10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC722905-529B-43E2-9578-290450DFCD10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC722905-529B-43E2-9578-290450DFCD10}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

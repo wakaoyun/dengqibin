@@ -1,0 +1,106 @@
+﻿body
+{
+	background-color:#6591be;
+	margin:5px;
+	scrollbar-face-color:#5385b7;
+	scrollbar-highlight-color:#5385b7;  
+	scrollbar-3dlight-color:#6b96c0; 
+	scrollbar-arrow-color:#386087; 
+	scrollbar-track-color:#6b96c0; 
+	scrollbar-darkshadow-color:#4575a5; 
+	scrollbar-shadow-color:#3f6a96;
+}
+#top
+{
+	width: 149px;
+	height: 6px;
+	overflow: hidden;
+	background-image: url('../../Images/left_top.gif');
+}
+#content
+{
+	background-color:#b8d8f9;
+	width:149px;
+	overflow:hidden;
+}
+.title
+{
+	font-size:16px;
+	width:139px;
+	height:30px;
+	margin-left:6px;
+	margin-top:5px;
+}
+.text{width:139px;}
+#extand
+{
+	float:left;
+	width:50px;
+	height:20px;
+	display:inline;
+	margin-left:6px;
+	font-size:12px;	
+	background-image: url('../../Images/extand.gif');
+}
+#collapse
+{
+	float:right;
+	width:50px;
+	height:20px;
+	display:inline;
+	margin-right:6px;
+	font-size:12px;
+	background-image: url('../../Images/collapse.gif');
+}
+#g{ width:149px; height:20px;}
+#g_1{background-image: url('../../Images/menu_a.gif');}
+#g_2{background-image: url('../../Images/menu_b.gif');}
+#g_3{background-image: url('../../Images/menu_c.gif');}
+#g_4{background-image: url('../../Images/menu_d.gif');}
+#g_5{background-image: url('../../Images/menu_e.gif');}
+#g_6{background-image: url('../../Images/menu_a.gif');}
+#g_7{background-image: url('../../Images/menu_b.gif');}
+#g_8{background-image: url('../../Images/menu_c.gif');}
+#g_9{background-image: url('../../Images/menu_f.gif');}
+#d_1{height:90px;}
+#d_2{height:72px;}
+#d_3{height:72px;}
+#d_4{height:34px;}
+#d_5{height:72px;}
+#d_6{height:72px;}
+#d_7{height:90px;}
+#d_8{height:90px;}
+#copyright{height:32px; font-size:12px; color:#1a438e; margin-left:16px; margin-top:10px;}
+p{font-size:12px; width:100%;}
+#bottom
+{
+	width:149px;
+	height: 6px;
+	overflow:hidden;
+	background-image: url('../../Images/left_bottom.gif');
+}
+a
+{
+	color:White;
+	text-decoration:none;
+	position:absolute;
+	margin-top:4px;
+	margin-left:7px;
+}
+.title a
+{
+	color:White;
+	text-decoration:none;
+	position:absolute;
+	margin-top:8px;
+	margin-left:30px;
+}
+p a{ color:#1a438e; text-decoration:none; position:absolute; margin-left:20px;}
+a:hover
+{
+	color:Black;
+}
+.test
+{
+	display:none;
+}

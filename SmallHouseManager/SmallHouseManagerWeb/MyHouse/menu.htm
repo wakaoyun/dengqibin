@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
+<html>
+<head>
+    <title></title>
+    <link href="Css/Menu.css" rel="Stylesheet" type="text/css" />
+    <script src="../JavaScript/Menu.js" type="text/javascript"></script>
+</head>
+<body>
+    <div>
+        <div id="top"></div>
+        <div id="content">
+            <div>
+                <div id="extand"><a href="javascript:expandAll()" target="_self">展开</a></div>
+                <div id="collapse"><a href="javascript:collapseAll()" target="_self">收缩</a></div>
+            </div>
+            <div>
+                <div id="g_1" class="title"><a href="javascript:collapse('d_1')" target="_self">基本信息</a></div>
+                <div id="d_1" class="text">
+                    <p><a href="MyInfo.aspx" target="right">☆我的个人信息</a></p>
+                    <p><a href="ModifyUser.aspx" target="right">★修改登录帐号</a></p>
+                    <p><a href="ModifyPWD.aspx" target="right">☆修改密码</a></p>
+                </div>
+            </div>
+            <div>
+                <div id="g_2" class="title"><a href="javascript:collapse('d_2')" target="_self">物业收费</a></div>
+                <div id="d_2" class="text">
+                    <p><a href="HomeChargeFree.aspx" target="right">★我的物业费用</a></p>
+                    <p><a href="ChargeFreeType.aspx" target="right">☆物业费类型</a></p>
+                </div>
+            </div> 
+            <div>
+                <div id="g_3" class="title"><a href="javascript:collapse('d_3')" target="_self">报修服务</a></div>
+                <div id="d_3" class="text">
+                    <p><a href="AddHomeRepair.aspx" target="right">★我要报修</a></p>
+                    <p><a href="MyHomeRepair.aspx" target="right">☆我的报修记录</a></p>                   
+                </div>
+            </div>
+            <div>
+                <div id="g_4" class="title"><a href="javascript:collapse('d_4')" target="_self">投诉服务</a></div>
+                <div id="d_4" class="text">
+                    <p><a href="AddComplaints.aspx" target="right">★我要投诉</a></p>
+                    <p><a href="MyComplaints.aspx" target="right">☆我的投诉记录</a></p>                   
+                </div>
+            </div>
+            <div>
+                <div id="g_5" class="title"><a href="../Exit.aspx" target="_parent" onClick='return confirm("确实要退出登陆吗?")'>退出登录</a></div>
+                <div id="copyright">☆毕业设计：邓啟彬☆<br />☆QQ：418338839☆</div>
+            </div>
+        </div>
+        <div id="bottom"></div>
+    </div>
+</body>
+</html>

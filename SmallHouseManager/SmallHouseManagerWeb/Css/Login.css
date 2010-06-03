@@ -1,0 +1,81 @@
+﻿body
+{
+	width: 430px;
+	position:absolute;	
+	padding-left:50%;
+	padding-top:150px;
+	left:-215px;
+}
+#login
+{
+	width:430px;
+	height:311px;
+	background-image: url('../Images/login.gif');
+}
+#content
+{
+	width:243px;
+	height:129px;
+	padding-top:134px;
+	padding-left:143px;
+}
+.row
+{
+	width:233px;
+	padding-top:6px;
+	padding-left:5px;	
+	font-size:14px;
+	font-weight:bold;
+}
+.name
+{
+	float:left;
+	width:60px;	
+	color:Blue;
+	text-align:right;
+	padding-top:4px;
+}
+.text
+{
+	float:left;
+	width:88px;
+	height:23px;
+	color:Black;
+	overflow:hidden;
+}
+#confirm
+{
+	float: left;
+	width: 56px;
+	height: 24px;
+	display:inline;
+	padding-left: 40px;
+}
+#cancel
+{
+	float:right;
+	width:56px;
+	height:24px;
+	display:inline;
+	padding-right:40px;
+}
+.checkcode
+{
+	width:36px;
+	height:24px;
+	overflow:hidden;
+}
+#code
+{
+	float:left;
+	width:50px;
+	padding-left:2px;
+}
+.check
+{
+	float:right;
+	width:60px;
+	height:20px;
+	overflow:hidden;
+	padding-top:2px;
+}

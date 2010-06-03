@@ -1,0 +1,44 @@
+﻿body
+{
+	background-color:#6591be;
+	margin:0.1px;
+}
+#top
+{
+	width: 100%;
+	height: 61px;
+	background-image: url('../Images/topbg.gif');
+	background-repeat: repeat-x;
+}
+#left
+{
+	width: 308px;
+	height: 39px;
+	margin-left:10px;
+	margin-top:11px;
+	background-image: url('../Images/word.gif');
+}
+#default
+{
+	font-size:16px;
+	position:absolute;
+	top: 35px;
+	right:140px;
+}
+#exit
+{
+	font-size:16px;
+	position:absolute;
+	top: 35px;
+	right:50px;
+}
+a
+{
+	color:White;
+	text-decoration:none;
+}
+a:hover
+{
+	color:Red;
+	text-decoration:none;
+}
