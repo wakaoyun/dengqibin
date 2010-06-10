@@ -1,22 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyTaskMgr", "MyTaskMgr\MyTaskMgr.vcxproj", "{A3D949A4-6284-4293-B939-1CAFAC2DB1B1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyTaskMgr", "MyTaskMgr\MyTaskMgr.vcxproj", "{3857D47B-A8A4-4AE1-83BC-2F3BB03BF4BE}"
 EndProject
 Global
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A3D949A4-6284-4293-B939-1CAFAC2DB1B1}.Debug|Win32.ActiveCfg = Debug|Win32
-		{A3D949A4-6284-4293-B939-1CAFAC2DB1B1}.Debug|Win32.Build.0 = Debug|Win32
-		{A3D949A4-6284-4293-B939-1CAFAC2DB1B1}.Release|Win32.ActiveCfg = Release|Win32
-		{A3D949A4-6284-4293-B939-1CAFAC2DB1B1}.Release|Win32.Build.0 = Release|Win32
+		{3857D47B-A8A4-4AE1-83BC-2F3BB03BF4BE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3857D47B-A8A4-4AE1-83BC-2F3BB03BF4BE}.Debug|Win32.Build.0 = Debug|Win32
+		{3857D47B-A8A4-4AE1-83BC-2F3BB03BF4BE}.Release|Win32.ActiveCfg = Release|Win32
+		{3857D47B-A8A4-4AE1-83BC-2F3BB03BF4BE}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

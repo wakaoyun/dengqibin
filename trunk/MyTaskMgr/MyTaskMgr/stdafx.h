@@ -55,4 +55,5 @@
 #endif
 #endif
 
-
+#define MINWIN_X 410
+#define MINWIN_Y 520

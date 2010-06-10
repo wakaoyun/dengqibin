@@ -57,12 +57,19 @@ CMyTaskMgrDlg::CMyTaskMgrDlg(CWnd* pParent /*=NULL*/)
 void CMyTaskMgrDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_TAB, m_MyTab);
 }
 
 BEGIN_MESSAGE_MAP(CMyTaskMgrDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_WM_GETMINMAXINFO()
+	ON_WM_CREATE()
+	ON_WM_SIZE()
+	ON_COMMAND(ID_FILE_EXITTASKMANAGER, &CMyTaskMgrDlg::OnFileExittaskmanager)
+	ON_COMMAND(ID_HELP_ABOUTTASKMANAGER, &CMyTaskMgrDlg::OnHelpAbouttaskmanager)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB, &CMyTaskMgrDlg::OnSelchangeTab)
 END_MESSAGE_MAP()
 
 
@@ -97,24 +104,35 @@ BOOL CMyTaskMgrDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
-	ShowWindow(SW_MAXIMIZE);
+	ShowWindow(SW_NORMAL);
 
-	// TODO: Add extra initialization here
+	m_MyTab.MoveWindow(5 ,5, MINWIN_X - 26, MINWIN_Y - 98);
+	m_MyTab.InsertItem(0,_T("Applications"));
+	m_MyTab.InsertItem(1,_T("Processes"));
+	m_MyTab.InsertItem(2,_T("Services"));
+	m_MyTab.InsertItem(3,_T("Performance"));
+	m_MyTab.InsertItem(4,_T("Networking"));
+	m_MyTab.InsertItem(5,_T("Users"));
+	
+	m_Application.Create(IDD_PROPPAGE_Applications, GetDlgItem(IDC_TAB));
+	m_Process.Create(IDD_PROPPAGE_Processes, GetDlgItem(IDC_TAB));
+	CRect rect;
+	m_MyTab.GetClientRect(&rect);
+	rect.top += 25;
+	rect.left += 1;
+	rect.bottom -= 6;
+	rect.right -= 4;
 
+	m_Application.MoveWindow(&rect);
+	m_Application.ShowWindow(SW_SHOW);
+	m_Process.MoveWindow(&rect);
+	m_Process.ShowWindow(SW_HIDE);
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
 void CMyTaskMgrDlg::OnSysCommand(UINT nID, LPARAM lParam)
-{
-	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
-	{
-		CAboutDlg dlgAbout;
-		dlgAbout.DoModal();
-	}
-	else
-	{
-		CDialogEx::OnSysCommand(nID, lParam);
-	}
+{	
+	CDialogEx::OnSysCommand(nID, lParam);
 }
 
 // If you add a minimize button to your dialog, you will need the code below
@@ -153,3 +171,71 @@ HCURSOR CMyTaskMgrDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void CMyTaskMgrDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
+{
+	lpMMI->ptMinTrackSize.x = MINWIN_X;
+	lpMMI->ptMinTrackSize.y = MINWIN_Y;
+
+	CDialogEx::OnGetMinMaxInfo(lpMMI);
+}
+
+
+int CMyTaskMgrDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CDialogEx::OnCreate(lpCreateStruct) == -1)
+		return -1;
+	
+	return 0;
+}
+
+
+void CMyTaskMgrDlg::OnSize(UINT nType, int cx, int cy)
+{	
+	CDialogEx::OnSize(nType, cx, cy);	
+	m_MyTab.MoveWindow(5, 5, cx - 10, cy - 40);
+	m_Application.MoveWindow(1, 25, cx - 14, cy - 68);
+	m_Process.MoveWindow(1, 25, cx - 14, cy - 68);
+}
+
+
+void CMyTaskMgrDlg::OnFileExittaskmanager()
+{
+	SendMessage(WM_CLOSE);
+}
+
+
+void CMyTaskMgrDlg::OnHelpAbouttaskmanager()
+{
+	CAboutDlg dlgAbout;
+	dlgAbout.DoModal();
+}
+
+
+void CMyTaskMgrDlg::OnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	int curSel = m_MyTab.GetCurSel();
+	switch(curSel)
+	{
+	case 0:
+		HideAll();
+		m_Application.ShowWindow(SW_SHOW);		
+		break;
+	case 1:
+		HideAll();
+		m_Process.ShowWindow(SW_SHOW);
+		break;
+	default:
+		HideAll();
+		break;
+	}
+	*pResult = 0;
+}
+
+
+void CMyTaskMgrDlg::HideAll(void)
+{
+	m_Application.ShowWindow(SW_HIDE);
+	m_Process.ShowWindow(SW_HIDE);
+}
