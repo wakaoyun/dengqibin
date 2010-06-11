@@ -29,4 +29,5 @@ public:
 	CStatic m_PhysicalMemoryStatic;
 	CStatic m_KernelMemoryStatic;
 	CStatic m_SystemStatic;
+	CButton m_btnRCMonitor;
 };
