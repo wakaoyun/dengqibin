@@ -106,27 +106,8 @@ BOOL CMyTaskMgrDlg::OnInitDialog()
 
 	ShowWindow(SW_NORMAL);
 
-	m_MyTab.MoveWindow(5 ,5, MINWIN_X - 26, MINWIN_Y - 98);
-	m_MyTab.InsertItem(0,_T("Applications"));
-	m_MyTab.InsertItem(1,_T("Processes"));
-	m_MyTab.InsertItem(2,_T("Services"));
-	m_MyTab.InsertItem(3,_T("Performance"));
-	m_MyTab.InsertItem(4,_T("Networking"));
-	m_MyTab.InsertItem(5,_T("Users"));
-	
-	m_Application.Create(IDD_PROPPAGE_Applications, GetDlgItem(IDC_TAB));
-	m_Process.Create(IDD_PROPPAGE_Processes, GetDlgItem(IDC_TAB));
-	CRect rect;
-	m_MyTab.GetClientRect(&rect);
-	rect.top += 25;
-	rect.left += 1;
-	rect.bottom -= 6;
-	rect.right -= 4;
+	InitMyTab();
 
-	m_Application.MoveWindow(&rect);
-	m_Application.ShowWindow(SW_SHOW);
-	m_Process.MoveWindow(&rect);
-	m_Process.ShowWindow(SW_HIDE);
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -197,6 +178,10 @@ void CMyTaskMgrDlg::OnSize(UINT nType, int cx, int cy)
 	m_MyTab.MoveWindow(5, 5, cx - 10, cy - 40);
 	m_Application.MoveWindow(1, 25, cx - 14, cy - 68);
 	m_Process.MoveWindow(1, 25, cx - 14, cy - 68);
+	m_Services.MoveWindow(1, 25, cx - 14, cy - 68);
+	m_Performance.MoveWindow(1, 25, cx - 14, cy - 68);
+	m_Networking.MoveWindow(1, 25, cx - 14, cy - 68);
+	m_Users.MoveWindow(1, 25, cx - 14, cy - 68);
 }
 
 
@@ -226,6 +211,22 @@ void CMyTaskMgrDlg::OnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 		HideAll();
 		m_Process.ShowWindow(SW_SHOW);
 		break;
+	case 2:
+		HideAll();
+		m_Services.ShowWindow(SW_SHOW);
+		break;
+	case 3:
+		HideAll();
+		m_Performance.ShowWindow(SW_SHOW);
+		break;
+	case 4:
+		HideAll();
+		m_Networking.ShowWindow(SW_SHOW);
+		break;
+	case 5:
+		HideAll();
+		m_Users.ShowWindow(SW_SHOW);
+		break;
 	default:
 		HideAll();
 		break;
@@ -238,4 +239,51 @@ void CMyTaskMgrDlg::HideAll(void)
 {
 	m_Application.ShowWindow(SW_HIDE);
 	m_Process.ShowWindow(SW_HIDE);
+	m_Services.ShowWindow(SW_HIDE);
+	m_Performance.ShowWindow(SW_HIDE);
+	m_Networking.ShowWindow(SW_HIDE);
+	m_Users.ShowWindow(SW_HIDE);
+}
+
+
+void CMyTaskMgrDlg::InitMyTab(void)
+{
+	m_MyTab.MoveWindow(5 ,5, MINWIN_X - 26, MINWIN_Y - 98);
+	m_MyTab.InsertItem(0,_T("Applications"));
+	m_MyTab.InsertItem(1,_T("Processes"));
+	m_MyTab.InsertItem(2,_T("Services"));
+	m_MyTab.InsertItem(3,_T("Performance"));
+	m_MyTab.InsertItem(4,_T("Networking"));
+	m_MyTab.InsertItem(5,_T("Users"));
+
+	CRect rect;
+	m_MyTab.GetClientRect(&rect);
+	rect.top += 25;
+	rect.left += 1;
+	rect.bottom -= 6;
+	rect.right -= 4;
+	//应该程序选项卡
+	m_Application.Create(IDD_PROPPAGE_Applications, GetDlgItem(IDC_TAB));
+	m_Application.MoveWindow(&rect);
+	m_Application.ShowWindow(SW_SHOW);
+	//进程选项卡
+	m_Process.Create(IDD_PROPPAGE_Processes, GetDlgItem(IDC_TAB));
+	m_Process.MoveWindow(&rect);
+	m_Process.ShowWindow(SW_HIDE);
+	//服务选项卡
+	m_Services.Create(IDD_PROPPAGE_Services, GetDlgItem(IDC_TAB));
+	m_Services.MoveWindow(&rect);
+	m_Services.ShowWindow(SW_HIDE);
+	//性能选项卡
+	m_Performance.Create(IDD_PROPPAGE_Performance, GetDlgItem(IDC_TAB));
+	m_Performance.MoveWindow(&rect);
+	m_Performance.ShowWindow(SW_HIDE);	
+	//网络选项卡
+	m_Networking.Create(IDD_PROPPAGE_Networking, GetDlgItem(IDC_TAB));
+	m_Networking.MoveWindow(&rect);
+	m_Networking.ShowWindow(SW_HIDE);
+	//用户选项卡
+	m_Users.Create(IDD_PROPPAGE_Users, GetDlgItem(IDC_TAB));
+	m_Users.MoveWindow(&rect);
+	m_Users.ShowWindow(SW_HIDE);
 }

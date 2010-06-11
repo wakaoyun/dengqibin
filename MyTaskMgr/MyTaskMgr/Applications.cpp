@@ -44,8 +44,8 @@ BOOL CApplications::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	SetBackgroundColor(RGB(255, 255,255));
-	m_Application.InsertColumn(0, _T("Task"), LVCFMT_LEFT, 250, -1);
-	m_Application.InsertColumn(1, _T("Status"), LVCFMT_LEFT, 50, -1);
+	m_Application.InsertColumn(0, _T("Task"), LVCFMT_LEFT, 260, -1);
+	m_Application.InsertColumn(1, _T("Status"), LVCFMT_LEFT, 60, -1);
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
@@ -55,13 +55,17 @@ BOOL CApplications::OnInitDialog()
 void CApplications::OnSize(UINT nType, int cx, int cy)
 {
 	CDialogEx::OnSize(nType, cx, cy);
+
 	m_Application.MoveWindow(15, 15, cx - 28, cy - 60);
+
 	CRect rectBtn;
 	m_EndTask.GetClientRect(&rectBtn);
 	cx = cx - 15 - rectBtn.Width();
 	m_NewTask.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());
+
 	cx = cx - 5 - rectBtn.Width();
 	m_SwitchTo.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());
+
 	cx = cx - 5 - rectBtn.Width();
 	m_EndTask.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());
 }
