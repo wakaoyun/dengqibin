@@ -45,7 +45,7 @@ BOOL CNetworking::OnInitDialog()
 	m_NetworkingList.InsertColumn(0, _T("Adapter Name"), LVCFMT_LEFT, 100, -1);
 	m_NetworkingList.InsertColumn(1, _T("Network Utilization"), LVCFMT_LEFT, 100, -1);
 	m_NetworkingList.InsertColumn(2, _T("Link Speed"), LVCFMT_LEFT, 80, -1);
-	m_NetworkingList.InsertColumn(3, _T("State"), LVCFMT_LEFT, 50, -1);
+	m_NetworkingList.InsertColumn(3, _T("State"), LVCFMT_LEFT, 70, -1);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
