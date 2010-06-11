@@ -6,6 +6,10 @@
 #include "afxcmn.h"
 #include "Applications.h"
 #include "Processes.h"
+#include "Services.h"
+#include "Performance.h"
+#include "Networking.h"
+#include "Users.h"
 
 
 // CMyTaskMgrDlg dialog
@@ -38,9 +42,14 @@ public:
 	CTabCtrl m_MyTab;
 	CApplications m_Application;
 	CProcesses m_Process;
+	CServices m_Services;
+	CPerformance m_Performance;
+	CNetworking m_Networking;
+	CUsers m_Users;
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnFileExittaskmanager();
 	afx_msg void OnHelpAbouttaskmanager();
 	afx_msg void OnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult);
 	void HideAll(void);
+	void InitMyTab(void);
 };
