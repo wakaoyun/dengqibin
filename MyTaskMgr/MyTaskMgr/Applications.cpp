@@ -34,6 +34,8 @@ void CApplications::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CApplications, CDialogEx)
 	ON_WM_SIZE()
+	ON_NOTIFY(LVN_GETDISPINFO, IDC_Application_LIST, &CApplications::OnGetdispinfoApplicationList)
+	ON_NOTIFY(HDN_ITEMCLICK, 0, &CApplications::OnItemclickApplicationList)
 END_MESSAGE_MAP()
 
 
@@ -49,9 +51,10 @@ BOOL CApplications::OnInitDialog()
 	m_Application.InsertColumn(0, _T("Task"), LVCFMT_LEFT, 260, -1);
 	m_Application.InsertColumn(1, _T("Status"), LVCFMT_LEFT, 60, -1);
 	m_Application.SetImageList(&m_ImageList, LVSIL_SMALL);
+	m_Application.SetExtendedStyle(m_Application.GetExtendedStyle()|LVS_EX_FULLROWSELECT);
 	
 	CurrenthWnd = this->GetParent()->GetParent()->m_hWnd;
-	hApplicationPageListCtrl = ::GetDlgItem(this->m_hWnd, IDC_Application_LIST);
+	hApplicationPageListCtrl = ::GetDlgItem(this->m_hWnd, IDC_Application_LIST);	
 	
 	CreateThread(NULL, 0, ApplicationPageRefreshThread, NULL, 0, NULL);
 	
@@ -119,7 +122,6 @@ BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
     typedef int (FAR __stdcall *IsHungAppWindowProc)(HWND);
     IsHungAppWindowProc IsHungAppWindow;
 
-
 	/* Skip our window */
 		if (hWnd == CurrenthWnd)
 			return TRUE;
@@ -145,7 +147,6 @@ BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 		hIcon = (HICON)(LONG_PTR)GetClassLongPtrW(hWnd, GCL_HICONSM);
 		if (!hIcon) hIcon = (HICON)(LONG_PTR)GetClassLongPtrW(hWnd, GCL_HICON);
 		if (!hIcon) SendMessageTimeoutW(hWnd, WM_QUERYDRAGICON, 0, 0, 0, 1000, (PDWORD_PTR)xhIcon);
-		if (!hIcon) SendMessageTimeoutW(hWnd, WM_GETICON, ICON_BIG /*1*/, 0, 0, 1000, (PDWORD_PTR)xhIcon);
     }
 
 	if (!hIcon)
@@ -168,6 +169,7 @@ void AddOrUpdateHwnd(HWND hWnd, WCHAR *szTitle, HICON hIcon, BOOL bHung)
     LPAPPLICATION_PAGE_LIST_ITEM  pAPLI = NULL;
     HIMAGELIST                    hImageListSmall;
     LV_ITEM                       item;
+	LV_COLUMN					  colum;					
     int                           i;
     BOOL                          bAlreadyInList = FALSE;
     BOOL                          bItemRemoved = FALSE;
@@ -228,12 +230,11 @@ void AddOrUpdateHwnd(HWND hWnd, WCHAR *szTitle, HICON hIcon, BOOL bHung)
         /* Add the item to the list */
         memset(&item, 0, sizeof(LV_ITEM));
         item.mask = LVIF_TEXT|LVIF_IMAGE|LVIF_PARAM;
-        //ImageList_AddIcon(hImageListSmall, hIcon);
         item.iImage = ImageList_AddIcon(hImageListSmall, hIcon);
-        item.pszText = /*LPSTR_TEXTCALLBACK*/szTitle;
+        item.pszText = szTitle;
         item.iItem = ListView_GetItemCount(hApplicationPageListCtrl);
         item.lParam = (LPARAM)pAPLI;
-        (void)ListView_InsertItem(hApplicationPageListCtrl, &item);
+        (void)ListView_InsertItem(hApplicationPageListCtrl, &item);		
     }
 
 
@@ -277,6 +278,45 @@ void AddOrUpdateHwnd(HWND hWnd, WCHAR *szTitle, HICON hIcon, BOOL bHung)
             (void)ListView_SetItem(hApplicationPageListCtrl, &item);
         }
     }
+}
 
-    //ApplicationPageUpdate();
+void CApplications::OnGetdispinfoApplicationList(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
+
+	LPAPPLICATION_PAGE_LIST_ITEM  pAPLI;	
+	if(pDispInfo->item.iSubItem = 1)
+	{
+		pAPLI = (LPAPPLICATION_PAGE_LIST_ITEM) pDispInfo->item.lParam;
+		if(pAPLI->bHung)
+			wcsncpy(pDispInfo->item.pszText, _T("Not response"), pDispInfo->item.cchTextMax);
+		else
+			wcsncpy(pDispInfo->item.pszText, _T("Running"), pDispInfo->item.cchTextMax);
+	}
+	*pResult = 0;
+}
+
+int CALLBACK ApplicationPageCompareFunc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+{
+	LPAPPLICATION_PAGE_LIST_ITEM  Param1;
+	LPAPPLICATION_PAGE_LIST_ITEM  Param2;
+
+	if (bSortAscending) {
+		Param1 = (LPAPPLICATION_PAGE_LIST_ITEM)lParam1;
+		Param2 = (LPAPPLICATION_PAGE_LIST_ITEM)lParam2;
+	} else {
+		Param1 = (LPAPPLICATION_PAGE_LIST_ITEM)lParam2;
+		Param2 = (LPAPPLICATION_PAGE_LIST_ITEM)lParam1;
+	}
+	return wcscmp(Param1->szTitle, Param2->szTitle);
+}
+
+
+
+void CApplications::OnItemclickApplicationList(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMHEADER phdr = reinterpret_cast<LPNMHEADER>(pNMHDR);
+	m_Application.SortItems(ApplicationPageCompareFunc,NULL);
+	bSortAscending = !bSortAscending;
+	*pResult = 0;
 }
