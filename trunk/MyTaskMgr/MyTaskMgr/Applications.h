@@ -28,6 +28,8 @@ public:
 	CButton m_NewTask;
 	CImageList m_ImageList;
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnGetdispinfoApplicationList(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnItemclickApplicationList(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 typedef struct
@@ -42,3 +44,5 @@ static HANDLE   hApplicationPageEvent = NULL;   /* When this event becomes signa
 DWORD WINAPI    ApplicationPageRefreshThread(void *lpParameter);
 BOOL CALLBACK   EnumWindowsProc(HWND hWnd, LPARAM lParam);
 void            AddOrUpdateHwnd(HWND hWnd, WCHAR *szTitle, HICON hIcon, BOOL bHung);
+int CALLBACK    ApplicationPageCompareFunc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
+static BOOL     bSortAscending = TRUE;
