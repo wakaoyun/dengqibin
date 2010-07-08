@@ -26,5 +26,19 @@ public:
 	CButton m_EndTask;
 	CButton m_SwitchTo;
 	CButton m_NewTask;
+	CImageList m_ImageList;
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 };
+
+typedef struct
+{
+	HWND    hWnd;
+	WCHAR   szTitle[260];
+	HICON   hIcon;
+	BOOL    bHung;
+} APPLICATION_PAGE_LIST_ITEM, *LPAPPLICATION_PAGE_LIST_ITEM;
+
+static HANDLE   hApplicationPageEvent = NULL;   /* When this event becomes signaled then we refresh the app list */
+DWORD WINAPI    ApplicationPageRefreshThread(void *lpParameter);
+BOOL CALLBACK   EnumWindowsProc(HWND hWnd, LPARAM lParam);
+void            AddOrUpdateHwnd(HWND hWnd, WCHAR *szTitle, HICON hIcon, BOOL bHung);
