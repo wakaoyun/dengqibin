@@ -6,7 +6,8 @@
 #include "Applications.h"
 #include "afxdialogex.h"
 
-
+HWND            hApplicationPageListCtrl;       /* Application ListCtrl Window */
+HWND			CurrenthWnd;
 // CApplications dialog
 
 IMPLEMENT_DYNAMIC(CApplications, CDialogEx)
@@ -44,8 +45,15 @@ BOOL CApplications::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	SetBackgroundColor(RGB(255, 255,255));
+	m_ImageList.Create(16, 16, ILC_COLORDDB|ILC_MASK, 0, 1);
 	m_Application.InsertColumn(0, _T("Task"), LVCFMT_LEFT, 260, -1);
 	m_Application.InsertColumn(1, _T("Status"), LVCFMT_LEFT, 60, -1);
+	m_Application.SetImageList(&m_ImageList, LVSIL_SMALL);
+	
+	CurrenthWnd = this->GetParent()->GetParent()->m_hWnd;
+	hApplicationPageListCtrl = ::GetDlgItem(this->m_hWnd, IDC_Application_LIST);
+	
+	CreateThread(NULL, 0, ApplicationPageRefreshThread, NULL, 0, NULL);
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
@@ -68,4 +76,207 @@ void CApplications::OnSize(UINT nType, int cx, int cy)
 
 	cx = cx - 5 - rectBtn.Width();
 	m_EndTask.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());
+}
+
+DWORD WINAPI ApplicationPageRefreshThread(void *lpParameter)
+{
+    /* Create the event */
+    hApplicationPageEvent = CreateEventW(NULL, TRUE, TRUE, NULL);
+
+    /* If we couldn't create the event then exit the thread */
+    if (!hApplicationPageEvent)
+        return 0;
+
+    while (1)
+    {
+        DWORD   dwWaitVal;
+
+        /* Wait on the event */
+        dwWaitVal = WaitForSingleObject(hApplicationPageEvent, INFINITE);
+
+        /* If the wait failed then the event object must have been */
+        /* closed and the task manager is exiting so exit this thread */
+        if (dwWaitVal == WAIT_FAILED)
+            return 0;
+
+        if (dwWaitVal == WAIT_OBJECT_0)
+        {
+            /* Reset our event */
+            ResetEvent(hApplicationPageEvent);
+            
+            EnumWindows(EnumWindowsProc, 0);            
+        }
+    }
+}
+
+BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
+{
+    HICON   hIcon;
+    WCHAR   szText[260];
+    BOOL    bHung = FALSE;
+    HICON*  xhIcon = (HICON*)&hIcon;
+
+    typedef int (FAR __stdcall *IsHungAppWindowProc)(HWND);
+    IsHungAppWindowProc IsHungAppWindow;
+
+
+	/* Skip our window */
+		if (hWnd == CurrenthWnd)
+			return TRUE;
+
+    GetWindowTextW(hWnd, szText, 260); /* Get the window text */
+
+    /* Check and see if this is a top-level app window */
+    if ((wcslen(szText) <= 0) ||
+        !IsWindowVisible(hWnd) ||
+        (GetParent(hWnd) != NULL) ||
+        (GetWindow(hWnd, GW_OWNER) != NULL) ||
+        (GetWindowLongPtrW(hWnd, GWL_EXSTYLE) & WS_EX_TOOLWINDOW))
+    {
+        return TRUE; /* Skip this window */
+    }
+
+    /* Get the icon for this window */
+    hIcon = NULL;
+    SendMessageTimeoutW(hWnd, WM_GETICON, ICON_SMALL, 0, 0, 1000, (PDWORD_PTR)xhIcon);
+
+    if (!hIcon)
+    {
+		hIcon = (HICON)(LONG_PTR)GetClassLongPtrW(hWnd, GCL_HICONSM);
+		if (!hIcon) hIcon = (HICON)(LONG_PTR)GetClassLongPtrW(hWnd, GCL_HICON);
+		if (!hIcon) SendMessageTimeoutW(hWnd, WM_QUERYDRAGICON, 0, 0, 0, 1000, (PDWORD_PTR)xhIcon);
+		if (!hIcon) SendMessageTimeoutW(hWnd, WM_GETICON, ICON_BIG /*1*/, 0, 0, 1000, (PDWORD_PTR)xhIcon);
+    }
+
+	if (!hIcon)
+		hIcon = LoadIconW(NULL, MAKEINTRESOURCEW(IDI_APPLICATION));
+
+    bHung = FALSE;
+
+    IsHungAppWindow = (IsHungAppWindowProc)(FARPROC)GetProcAddress(GetModuleHandleW(L"USER32.DLL"), "IsHungAppWindow");
+
+    if (IsHungAppWindow)
+        bHung = IsHungAppWindow(hWnd);
+
+    AddOrUpdateHwnd(hWnd, szText, hIcon, bHung);
+
+    return TRUE;
+}
+
+void AddOrUpdateHwnd(HWND hWnd, WCHAR *szTitle, HICON hIcon, BOOL bHung)
+{
+    LPAPPLICATION_PAGE_LIST_ITEM  pAPLI = NULL;
+    HIMAGELIST                    hImageListSmall;
+    LV_ITEM                       item;
+    int                           i;
+    BOOL                          bAlreadyInList = FALSE;
+    BOOL                          bItemRemoved = FALSE;
+
+    memset(&item, 0, sizeof(LV_ITEM));
+
+    /* Get the image lists */
+    hImageListSmall = ListView_GetImageList(hApplicationPageListCtrl, LVSIL_SMALL);
+
+    /* Check to see if it's already in our list */
+	for (i=0; i<ListView_GetItemCount(hApplicationPageListCtrl); i++)
+	{
+		memset(&item, 0, sizeof(LV_ITEM));
+		item.mask = LVIF_IMAGE|LVIF_PARAM;
+		item.iItem = i;
+		(void)ListView_GetItem(hApplicationPageListCtrl, &item);
+
+		pAPLI = (LPAPPLICATION_PAGE_LIST_ITEM)item.lParam;
+		if (pAPLI->hWnd == hWnd)
+		{
+			bAlreadyInList = TRUE;
+			break;
+		}
+	}
+
+    /* If it is already in the list then update it if necessary */
+    if (bAlreadyInList)
+    {
+        /* Check to see if anything needs updating */
+        if ((pAPLI->hIcon != hIcon) ||
+            (_wcsicmp(pAPLI->szTitle, szTitle) != 0) ||
+            (pAPLI->bHung != bHung))
+        {
+            /* Update the structure */
+            pAPLI->hIcon = hIcon;
+            pAPLI->bHung = bHung;
+            wcscpy(pAPLI->szTitle, szTitle);
+
+            /* Update the image list */
+            ImageList_ReplaceIcon(hImageListSmall, item.iItem, hIcon);
+
+            /* Update the list view */
+            (void)ListView_RedrawItems(hApplicationPageListCtrl, 0, ListView_GetItemCount(hApplicationPageListCtrl));
+            /* UpdateWindow(m_Application); */
+            InvalidateRect(hApplicationPageListCtrl, NULL, 0);
+        }
+    }
+    /* It is not already in the list so add it */
+    else
+    {
+        pAPLI = (LPAPPLICATION_PAGE_LIST_ITEM)HeapAlloc(GetProcessHeap(), 0, sizeof(APPLICATION_PAGE_LIST_ITEM));
+
+        pAPLI->hWnd = hWnd;
+        pAPLI->hIcon = hIcon;
+        pAPLI->bHung = bHung;
+        wcscpy(pAPLI->szTitle, szTitle);
+
+        /* Add the item to the list */
+        memset(&item, 0, sizeof(LV_ITEM));
+        item.mask = LVIF_TEXT|LVIF_IMAGE|LVIF_PARAM;
+        //ImageList_AddIcon(hImageListSmall, hIcon);
+        item.iImage = ImageList_AddIcon(hImageListSmall, hIcon);
+        item.pszText = /*LPSTR_TEXTCALLBACK*/szTitle;
+        item.iItem = ListView_GetItemCount(hApplicationPageListCtrl);
+        item.lParam = (LPARAM)pAPLI;
+        (void)ListView_InsertItem(hApplicationPageListCtrl, &item);
+    }
+
+
+    /* Check to see if we need to remove any items from the list */
+    for (i=ListView_GetItemCount(hApplicationPageListCtrl)-1; i>=0; i--)
+    {
+        memset(&item, 0, sizeof(LV_ITEM));
+        item.mask = LVIF_IMAGE|LVIF_PARAM;
+        item.iItem = i;
+        (void)ListView_GetItem(hApplicationPageListCtrl, &item);
+
+        pAPLI = (LPAPPLICATION_PAGE_LIST_ITEM)item.lParam;
+        if (!IsWindow(pAPLI->hWnd)||
+            (wcslen(pAPLI->szTitle) <= 0) ||
+            !IsWindowVisible(pAPLI->hWnd) ||
+            (GetParent(pAPLI->hWnd) != NULL) ||
+            (GetWindow(pAPLI->hWnd, GW_OWNER) != NULL) ||
+            (GetWindowLongPtrW(hWnd, GWL_EXSTYLE) & WS_EX_TOOLWINDOW))
+        {
+            ImageList_Remove(hImageListSmall, item.iItem);
+
+            (void)ListView_DeleteItem(hApplicationPageListCtrl, item.iItem);
+            HeapFree(GetProcessHeap(), 0, pAPLI);
+            bItemRemoved = TRUE;
+        }
+    }
+
+    /*
+     * If an item was removed from the list then
+     * we need to resync all the items with the
+     * image list
+     */
+    if (bItemRemoved)
+    {
+        for (i=0; i<ListView_GetItemCount(hApplicationPageListCtrl); i++)
+        {
+            memset(&item, 0, sizeof(LV_ITEM));
+            item.mask = LVIF_IMAGE;
+            item.iItem = i;
+            item.iImage = i;
+            (void)ListView_SetItem(hApplicationPageListCtrl, &item);
+        }
+    }
+
+    //ApplicationPageUpdate();
 }
