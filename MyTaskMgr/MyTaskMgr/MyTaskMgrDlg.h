@@ -46,6 +46,7 @@ public:
 	CPerformance m_Performance;
 	CNetworking m_Networking;
 	CUsers m_Users;
+	CStatusBar m_StatusBar;
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnFileExittaskmanager();
 	afx_msg void OnHelpAbouttaskmanager();

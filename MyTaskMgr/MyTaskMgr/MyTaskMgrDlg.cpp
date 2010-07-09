@@ -71,6 +71,12 @@ BEGIN_MESSAGE_MAP(CMyTaskMgrDlg, CDialogEx)
 	ON_COMMAND(ID_HELP_ABOUTTASKMANAGER, &CMyTaskMgrDlg::OnHelpAbouttaskmanager)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB, &CMyTaskMgrDlg::OnSelchangeTab)
 END_MESSAGE_MAP()
+static UINT BASED_CODE indicators[] =
+{
+	10001,
+	10002,
+	10003, 
+};
 
 
 // CMyTaskMgrDlg message handlers
@@ -107,6 +113,17 @@ BOOL CMyTaskMgrDlg::OnInitDialog()
 	ShowWindow(SW_NORMAL);
 
 	InitMyTab();
+
+	m_StatusBar.Create(this);
+	m_StatusBar.SetIndicators(indicators,3);
+	m_StatusBar.SetPaneInfo(0,10001, SBPS_NORMAL,150); 
+	/*m_StatusBar.SetPaneInfo(1,1002, SBPS_NORMAL,150);
+	m_StatusBar.SetPaneInfo(2,1003, SBPS_NORMAL,150);*/
+	m_StatusBar.SetPaneText(0,_T("Welcome come here"),TRUE); //set new pane1 text
+	//m_StatusBar.SetPaneText(1,_T("You can get a sweet felling"),TRUE); //set new pane2 text
+	RepositionBars(AFX_IDW_CONTROLBAR_FIRST,AFX_IDW_CONTROLBAR_LAST,10002); 
+
+
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -182,6 +199,7 @@ void CMyTaskMgrDlg::OnSize(UINT nType, int cx, int cy)
 	m_Performance.MoveWindow(1, 25, cx - 14, cy - 68);
 	m_Networking.MoveWindow(1, 25, cx - 14, cy - 68);
 	m_Users.MoveWindow(1, 25, cx - 14, cy - 68);
+	RepositionBars(AFX_IDW_CONTROLBAR_FIRST,AFX_IDW_CONTROLBAR_LAST,10002); 
 }
 
 
