@@ -36,6 +36,7 @@ BEGIN_MESSAGE_MAP(CApplications, CDialogEx)
 	ON_WM_SIZE()
 	ON_NOTIFY(LVN_GETDISPINFO, IDC_Application_LIST, &CApplications::OnGetdispinfoApplicationList)
 	ON_NOTIFY(HDN_ITEMCLICK, 0, &CApplications::OnItemclickApplicationList)
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -57,6 +58,7 @@ BOOL CApplications::OnInitDialog()
 	hApplicationPageListCtrl = ::GetDlgItem(this->m_hWnd, IDC_Application_LIST);	
 	
 	CreateThread(NULL, 0, ApplicationPageRefreshThread, NULL, 0, NULL);
+	SetTimer(1,1000,NULL);
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
@@ -106,7 +108,7 @@ DWORD WINAPI ApplicationPageRefreshThread(void *lpParameter)
         {
             /* Reset our event */
             ResetEvent(hApplicationPageEvent);
-            
+ 
             EnumWindows(EnumWindowsProc, 0);            
         }
     }
@@ -211,8 +213,13 @@ void AddOrUpdateHwnd(HWND hWnd, WCHAR *szTitle, HICON hIcon, BOOL bHung)
             /* Update the image list */
             ImageList_ReplaceIcon(hImageListSmall, item.iItem, hIcon);
 
+			pAPLI->hWnd = hWnd;
+			pAPLI->hIcon = hIcon;
+			pAPLI->bHung = bHung;
+			wcscpy(pAPLI->szTitle, szTitle);
+			
             /* Update the list view */
-            (void)ListView_RedrawItems(hApplicationPageListCtrl, 0, ListView_GetItemCount(hApplicationPageListCtrl));
+            (void)ListView_RedrawItems(hApplicationPageListCtrl, i, i+1/*ListView_GetItemCount(hApplicationPageListCtrl)*/);
             /* UpdateWindow(m_Application); */
             InvalidateRect(hApplicationPageListCtrl, NULL, 0);
         }
@@ -319,4 +326,12 @@ void CApplications::OnItemclickApplicationList(NMHDR *pNMHDR, LRESULT *pResult)
 	m_Application.SortItems(ApplicationPageCompareFunc,NULL);
 	bSortAscending = !bSortAscending;
 	*pResult = 0;
+}
+
+
+void CApplications::OnTimer(UINT_PTR nIDEvent)
+{
+	SetEvent(hApplicationPageEvent);
+
+	CDialogEx::OnTimer(nIDEvent);
 }
