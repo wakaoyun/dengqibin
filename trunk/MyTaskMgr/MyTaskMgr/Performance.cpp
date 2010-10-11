@@ -58,15 +58,39 @@ void CPerformance::OnSize(UINT nType, int cx, int cy)
 {
 	CDialogEx::OnSize(nType, cx, cy);
 	
-	m_PhysicalMemoryStatic.MoveWindow(15, cy - 145, MINWIN_X / 2 - 38, 80);
-	m_KernelMemoryStatic.MoveWindow(15, cy - 60, MINWIN_X / 2 - 38, 50);
+	if(m_PhysicalMemoryStatic.m_hWnd!=NULL)
+	{
+		m_PhysicalMemoryStatic.MoveWindow(15, cy - 145, MINWIN_X / 2 - 38, 80);
+	}
+	if(m_KernelMemoryStatic.m_hWnd!=NULL)
+	{
+		m_KernelMemoryStatic.MoveWindow(15, cy - 60, MINWIN_X / 2 - 38, 50);
+	}
 
-	m_SystemStatic.MoveWindow(MINWIN_X / 2 - 12, cy -145, 172, 103);
-	m_btnRCMonitor.MoveWindow(MINWIN_X / 2 - 12, cy - 37, 172, 23);
+	if(m_SystemStatic.m_hWnd!=NULL)
+	{
+		m_SystemStatic.MoveWindow(MINWIN_X / 2 - 12, cy -145, 172, 103);
+	}
+	if(m_btnRCMonitor.m_hWnd!=NULL)
+	{
+		m_btnRCMonitor.MoveWindow(MINWIN_X / 2 - 12, cy - 37, 172, 23);
+	}
 
 	cy = cy / 2 - 82;
-	m_CPUUsageStatic.MoveWindow(15, 10, 90, cy);
-	m_CPUUsageHistoryStatic.MoveWindow(120, 10, cx - 135, cy);
-	m_MemoryStatic.MoveWindow(15, cy + 15, 90, cy);
-	m_MemoryHistoryStatic.MoveWindow(120, cy + 15, cx - 135, cy);
+	if(m_CPUUsageStatic.m_hWnd!=NULL)
+	{
+		m_CPUUsageStatic.MoveWindow(15, 10, 90, cy);
+	}
+	if(m_CPUUsageHistoryStatic.m_hWnd!=NULL)
+	{
+		m_CPUUsageHistoryStatic.MoveWindow(120, 10, cx - 135, cy);
+	}
+	if(m_MemoryStatic.m_hWnd!=NULL)
+	{
+		m_MemoryStatic.MoveWindow(15, cy + 15, 90, cy);
+	}
+	if(m_MemoryHistoryStatic.m_hWnd!=NULL)
+	{
+		m_MemoryHistoryStatic.MoveWindow(120, cy + 15, cx - 135, cy);
+	}
 }

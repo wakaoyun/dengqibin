@@ -57,9 +57,18 @@ void CServices::OnSize(UINT nType, int cx, int cy)
 {
 	CDialogEx::OnSize(nType, cx, cy);
 
-	m_Services.MoveWindow(15, 15, cx - 28, cy - 60);
+	if(m_Services.m_hWnd!=NULL)
+	{
+		m_Services.MoveWindow(15, 15, cx - 28, cy - 60);
+	}
 	CRect rectBtn;
-	m_btnServices.GetClientRect(&rectBtn);
-	cx = cx - 15 - rectBtn.Width();
-	m_btnServices.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());
+	if(m_btnServices.m_hWnd!=NULL)
+	{
+		m_btnServices.GetClientRect(&rectBtn);
+		cx = cx - 15 - rectBtn.Width();
+		if(m_btnServices.m_hWnd!=NULL)
+		{
+			m_btnServices.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());
+		}
+	}
 }

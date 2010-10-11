@@ -191,14 +191,35 @@ int CMyTaskMgrDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMyTaskMgrDlg::OnSize(UINT nType, int cx, int cy)
 {	
-	CDialogEx::OnSize(nType, cx, cy);	
-	m_MyTab.MoveWindow(5, 5, cx - 10, cy - 40);
-	m_Application.MoveWindow(1, 25, cx - 14, cy - 68);
-	m_Process.MoveWindow(1, 25, cx - 14, cy - 68);
-	m_Services.MoveWindow(1, 25, cx - 14, cy - 68);
-	m_Performance.MoveWindow(1, 25, cx - 14, cy - 68);
-	m_Networking.MoveWindow(1, 25, cx - 14, cy - 68);
-	m_Users.MoveWindow(1, 25, cx - 14, cy - 68);
+	CDialogEx::OnSize(nType, cx, cy);
+	if(m_MyTab.m_hWnd!=NULL)
+	{
+		m_MyTab.MoveWindow(5, 5, cx - 10, cy - 40);
+	}
+	if(m_Application.m_hWnd!=NULL)
+	{
+		m_Application.MoveWindow(1, 25, cx - 14, cy - 68);
+	}
+	if(m_Process.m_hWnd!=NULL)
+	{
+		m_Process.MoveWindow(1, 25, cx - 14, cy - 68);
+	}
+	if(m_Services.m_hWnd!=NULL)
+	{
+		m_Services.MoveWindow(1, 25, cx - 14, cy - 68);
+	}
+	if(m_Performance.m_hWnd!=NULL)
+	{
+		m_Performance.MoveWindow(1, 25, cx - 14, cy - 68);
+	}
+	if(m_Networking.m_hWnd!=NULL)
+	{
+		m_Networking.MoveWindow(1, 25, cx - 14, cy - 68);
+	}
+	if(m_Users.m_hWnd!=NULL)
+	{
+		m_Users.MoveWindow(1, 25, cx - 14, cy - 68);
+	}
 	RepositionBars(AFX_IDW_CONTROLBAR_FIRST,AFX_IDW_CONTROLBAR_LAST,10002); 
 }
 

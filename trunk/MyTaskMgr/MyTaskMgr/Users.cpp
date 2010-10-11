@@ -59,17 +59,30 @@ void CUsers::OnSize(UINT nType, int cx, int cy)
 {
 	CDialogEx::OnSize(nType, cx, cy);
 
-	m_UsersList.MoveWindow(15, 15, cx - 28, cy - 60);
+	if(m_UsersList.m_hWnd!=NULL)
+	{
+		m_UsersList.MoveWindow(15, 15, cx - 28, cy - 60);
+	}
 
 	CRect rectBtn;
-	m_btnSendMsg.GetClientRect(&rectBtn);
-	cx = cx - 15 - rectBtn.Width();
-	m_btnSendMsg.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());
+	if(m_btnSendMsg.m_hWnd!=NULL)
+	{
+		m_btnSendMsg.GetClientRect(&rectBtn);
+		cx = cx - 15 - rectBtn.Width();
+	
+		m_btnSendMsg.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());	
 
-	m_btnDisconnect.GetClientRect(&rectBtn);
-	cx = cx - 5 - rectBtn.Width();
-	m_btnLogoff.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());
-
-	cx = cx - 5 - rectBtn.Width();
-	m_btnDisconnect.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());
+		if(m_btnDisconnect.m_hWnd!=NULL)
+		{
+			m_btnDisconnect.GetClientRect(&rectBtn);
+			cx = cx - 5 - rectBtn.Width();
+	
+			m_btnDisconnect.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());
+		}
+		cx = cx - 5 - rectBtn.Width();
+		if(m_btnLogoff.m_hWnd!=NULL)
+		{
+			m_btnLogoff.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());
+		}
+	}
 }

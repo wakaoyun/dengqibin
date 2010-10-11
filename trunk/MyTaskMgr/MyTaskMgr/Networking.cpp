@@ -57,6 +57,12 @@ void CNetworking::OnSize(UINT nType, int cx, int cy)
 	CDialogEx::OnSize(nType, cx, cy);
 	cx = cx - 10;
 	cy = cy * (3 / 4.0F)- 10;
-	m_LoacalStatic.MoveWindow(5, 5, cx, cy);
-	m_NetworkingList.MoveWindow(5,cy + 13, cx, cy / 3);
+	if(m_LoacalStatic.m_hWnd!=NULL)
+	{
+		m_LoacalStatic.MoveWindow(5, 5, cx, cy);
+	}
+	if(m_NetworkingList.m_hWnd!=NULL)
+	{
+		m_NetworkingList.MoveWindow(5,cy + 13, cx, cy / 3);
+	}
 }
