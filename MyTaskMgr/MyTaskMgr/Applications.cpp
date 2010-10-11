@@ -20,6 +20,7 @@ CApplications::CApplications(CWnd* pParent /*=NULL*/)
 
 CApplications::~CApplications()
 {
+
 }
 
 void CApplications::DoDataExchange(CDataExchange* pDX)
@@ -55,8 +56,8 @@ BOOL CApplications::OnInitDialog()
 	m_Application.SetExtendedStyle(m_Application.GetExtendedStyle()|LVS_EX_FULLROWSELECT);
 	
 	CurrenthWnd = this->GetParent()->GetParent()->m_hWnd;
-	hApplicationPageListCtrl = ::GetDlgItem(this->m_hWnd, IDC_Application_LIST);	
-	
+	hApplicationPageListCtrl = ::GetDlgItem(this->m_hWnd, IDC_Application_LIST);
+
 	CreateThread(NULL, 0, ApplicationPageRefreshThread, NULL, 0, NULL);
 	SetTimer(1,1000,NULL);
 	
@@ -68,19 +69,32 @@ BOOL CApplications::OnInitDialog()
 void CApplications::OnSize(UINT nType, int cx, int cy)
 {
 	CDialogEx::OnSize(nType, cx, cy);
-
-	m_Application.MoveWindow(15, 15, cx - 28, cy - 60);
-
+	if(m_Application.m_hWnd!=NULL)
+	{
+		m_Application.MoveWindow(15, 15, cx - 28, cy - 60);
+	}
 	CRect rectBtn;
-	m_EndTask.GetClientRect(&rectBtn);
-	cx = cx - 15 - rectBtn.Width();
-	m_NewTask.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());
+	if(m_EndTask.m_hWnd!=NULL)
+	{
+		m_EndTask.GetClientRect(&rectBtn);
+		cx = cx - 15 - rectBtn.Width();
+		if(m_NewTask.m_hWnd!=NULL)
+		{
+			m_NewTask.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());
+		}
 
-	cx = cx - 5 - rectBtn.Width();
-	m_SwitchTo.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());
+		cx = cx - 5 - rectBtn.Width();
+		if(m_SwitchTo.m_hWnd!=NULL)
+		{
+			m_SwitchTo.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());
+		}
 
-	cx = cx - 5 - rectBtn.Width();
-	m_EndTask.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());
+		cx = cx - 5 - rectBtn.Width();
+		if(m_EndTask.m_hWnd!=NULL)
+		{
+			m_EndTask.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());
+		}
+	}
 }
 
 DWORD WINAPI ApplicationPageRefreshThread(void *lpParameter)
@@ -109,7 +123,7 @@ DWORD WINAPI ApplicationPageRefreshThread(void *lpParameter)
             /* Reset our event */
             ResetEvent(hApplicationPageEvent);
  
-            EnumWindows(EnumWindowsProc, 0);            
+            EnumWindows(EnumWindowsProc, 0);  
         }
     }
 }
@@ -205,23 +219,21 @@ void AddOrUpdateHwnd(HWND hWnd, WCHAR *szTitle, HICON hIcon, BOOL bHung)
             (_wcsicmp(pAPLI->szTitle, szTitle) != 0) ||
             (pAPLI->bHung != bHung))
         {
-            /* Update the structure */
-            pAPLI->hIcon = hIcon;
+            /* Update the structure */            
             pAPLI->bHung = bHung;
             wcscpy(pAPLI->szTitle, szTitle);
-
-            /* Update the image list */
-            ImageList_ReplaceIcon(hImageListSmall, item.iItem, hIcon);
-
-			pAPLI->hWnd = hWnd;
-			pAPLI->hIcon = hIcon;
-			pAPLI->bHung = bHung;
-			wcscpy(pAPLI->szTitle, szTitle);
 			
-            /* Update the list view */
-            (void)ListView_RedrawItems(hApplicationPageListCtrl, i, i+1/*ListView_GetItemCount(hApplicationPageListCtrl)*/);
-            /* UpdateWindow(m_Application); */
-            InvalidateRect(hApplicationPageListCtrl, NULL, 0);
+			pAPLI->hIcon = hIcon;
+			ImageList_ReplaceIcon(hImageListSmall, i, hIcon);
+			
+			memset(&item, 0, sizeof(LV_ITEM));
+            item.mask = LVIF_TEXT|LVIF_IMAGE|LVIF_PARAM;
+            item.iItem = i;
+            item.iImage = i;
+			item.pszText = szTitle;
+			item.lParam = (LPARAM)pAPLI;
+
+			ListView_SetItem(hApplicationPageListCtrl, &item);
         }
     }
     /* It is not already in the list so add it */

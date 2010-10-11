@@ -53,13 +53,23 @@ BOOL CProcesses::OnInitDialog()
 void CProcesses::OnSize(UINT nType, int cx, int cy)
 {
 	CDialogEx::OnSize(nType, cx, cy);
-	m_Process.MoveWindow(15, 15, cx - 28, cy - 60);
+	if(m_Process.m_hWnd!=NULL)
+	{
+		m_Process.MoveWindow(15, 15, cx - 28, cy - 60);
+	}
 
 	CRect rectBtn;
-	m_EndProcess.GetClientRect(&rectBtn);
-	cx = cx - 15 - rectBtn.Width();
-	m_EndProcess.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());
+	if(m_EndProcess.m_hWnd!=NULL)
+	{
+		m_EndProcess.GetClientRect(&rectBtn);
+		cx = cx - 15 - rectBtn.Width();
+	
+		m_EndProcess.MoveWindow(cx, cy - 37, rectBtn.Width(), rectBtn.Height());
+	}
 
-	m_ShowAll.GetClientRect(&rectBtn);
-	m_ShowAll.MoveWindow(15, cy - 36, rectBtn.Width(), rectBtn.Height());
+	if(m_ShowAll.m_hWnd!=NULL)
+	{
+		m_ShowAll.GetClientRect(&rectBtn);	
+		m_ShowAll.MoveWindow(15, cy - 36, rectBtn.Width(), rectBtn.Height());
+	}
 }
