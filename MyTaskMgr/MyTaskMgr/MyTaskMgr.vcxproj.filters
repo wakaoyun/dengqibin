@@ -57,6 +57,12 @@
     <ClInclude Include="Users.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PerformanceHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="extypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyTaskMgr.cpp">
@@ -84,6 +90,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Users.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PerformanceHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

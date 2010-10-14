@@ -1,6 +1,7 @@
 #pragma once
 #include "afxcmn.h"
 #include "afxwin.h"
+#include "PerformanceHelper.h"
 
 
 // CProcesses dialog
@@ -26,4 +27,13 @@ public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	CButton m_EndProcess;
 	CButton m_ShowAll;
+private:	
+	static DWORD WINAPI ProcPageRefreshThread(void *lpParameter);
+	static void RefreshProc(PERFDATA *P);
+	static BOOL ProcessRunning(DWORD ProcessId);
+public:
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
+static HANDLE   hProcPageEvent = NULL;
+static HWND hProcPageListCtrl;
+static CPerformanceHelper perfHelper;
