@@ -148,13 +148,19 @@ void CChineseChessDlg::DrawChessImage(int x, int y, HDC dc)
 		hbmp = (HBITMAP)LoadImage(AfxGetInstanceHandle(),path,
 			IMAGE_BITMAP,50,50,LR_LOADFROMFILE);
 		HBRUSH brush = CreatePatternBrush(hbmp); 
-		SelectObject(dc,brush);
+		HGDIOBJ hOld = SelectObject(dc,brush);
 		RECT rec;
 		rec.left = x * 50 ;
 		rec.top = y * 50 ;
 		rec.bottom = rec.top + 50;
 		rec.right = rec.left + 50;
 		FillRect(dc,&rec,brush);
+
+		//»Ö¸´Ô­ÏÈ×´Ì¬
+		SelectObject(dc, hOld);
+
+		DeleteObject(brush);
+		DeleteObject(hOld);
 	}
 }
 
@@ -167,13 +173,17 @@ void CChineseChessDlg::DrawChessBord(HDC dc)
 	strcat(path,_T("\\Sourse\\chessbord.bmp"));
 	hbmp = (HBITMAP)LoadImage(AfxGetInstanceHandle(),path,IMAGE_BITMAP,0,0,LR_LOADFROMFILE);
 	HBRUSH brush = CreatePatternBrush(hbmp); 
-	SelectObject(dc,brush);
+	HGDIOBJ hOld = SelectObject(dc,brush);
 	RECT rec;
 	rec.left = 0;
 	rec.top = 0;
 	rec.bottom = 500;
 	rec.right = 450;
 	FillRect(dc,&rec,brush);
+
+	SelectObject(dc, hOld);
+	DeleteObject(hOld);
+	DeleteObject(brush);
 }
 
 void CChineseChessDlg::OnExit() 
@@ -290,7 +300,7 @@ int CChineseChessDlg::SearchEngine(CChess::CHESS chess[10][9], int alph, int bet
 
 bool MyInvalidateRect(CONST RECT *lpRect,BOOL bErase)
 {
-	return InvalidateRect(AfxGetMainWnd()->m_hWnd,lpRect,bErase);
+	return InvalidateRect(NULL,lpRect,bErase);
 }
 
 void GameOver()
