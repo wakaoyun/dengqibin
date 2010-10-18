@@ -2,6 +2,7 @@
 #include "afxcmn.h"
 #include "afxwin.h"
 #include "PerformanceHelper.h"
+#include "ColumnMgr.h"
 
 
 // CProcesses dialog
@@ -33,6 +34,10 @@ private:
 	static BOOL ProcessRunning(DWORD ProcessId);
 public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnLvnGetdispinfoProcessList(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnHdnItemclickProcessList(NMHDR *pNMHDR, LRESULT *pResult);
+private:
+	CColumnMgr columnMgr;
 };
 static HANDLE   hProcPageEvent = NULL;
 static HWND hProcPageListCtrl;
