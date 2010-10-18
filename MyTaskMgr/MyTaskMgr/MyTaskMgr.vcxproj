@@ -100,6 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Applications.h" />
+    <ClInclude Include="ColumnMgr.h" />
     <ClInclude Include="extypes.h" />
     <ClInclude Include="MyTaskMgr.h" />
     <ClInclude Include="MyTaskMgrDlg.h" />
@@ -115,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Applications.cpp" />
+    <ClCompile Include="ColumnMgr.cpp" />
     <ClCompile Include="MyTaskMgr.cpp" />
     <ClCompile Include="MyTaskMgrDlg.cpp" />
     <ClCompile Include="Networking.cpp" />

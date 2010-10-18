@@ -34,6 +34,8 @@ void CProcesses::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CProcesses, CDialogEx)
 	ON_WM_SIZE()
 	ON_WM_TIMER()
+	ON_NOTIFY(LVN_GETDISPINFO, IDC_Process_LIST, &CProcesses::OnLvnGetdispinfoProcessList)
+	ON_NOTIFY(HDN_ITEMCLICK, 0, &CProcesses::OnHdnItemclickProcessList)
 END_MESSAGE_MAP()
 
 
@@ -45,8 +47,9 @@ BOOL CProcesses::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	SetBackgroundColor(RGB(255, 255,255));
-	m_Process.InsertColumn(0, _T("Image Name"), LVCFMT_LEFT, 100, -1);
+	//m_Process.InsertColumn(0, _T("Image Name"), LVCFMT_LEFT, 100, -1);
 	hProcPageListCtrl = ::GetDlgItem(this->m_hWnd, IDC_Process_LIST);
+	columnMgr.AddColumns(hProcPageListCtrl);
 
 	CreateThread(NULL, 0, ProcPageRefreshThread, NULL, 0, NULL);
 	SetTimer(1,1000,NULL);
@@ -82,7 +85,6 @@ void CProcesses::OnSize(UINT nType, int cx, int cy)
 
 DWORD CProcesses::ProcPageRefreshThread(void *lpParameter)
 {
-	perfHelper.PerfGetData();
 	/* Create the event */
 	hProcPageEvent = CreateEventW(NULL, TRUE, TRUE, NULL);
 
@@ -106,6 +108,7 @@ DWORD CProcesses::ProcPageRefreshThread(void *lpParameter)
 		{
 			/* Reset our event */
 			ResetEvent(hProcPageEvent);
+			perfHelper.PerfDataRefresh();
 			PERFDATA *perfData = perfHelper.PerfGetData();
 			RefreshProc(perfData); 
 		}
@@ -142,8 +145,9 @@ void CProcesses::RefreshProc(PERFDATA *p)
 	int count = 1;
 	while(count++ != perfHelper.PerfDataGetProcessCount())
 	{
-		LV_ITEM                       item;
+		LV_ITEM item;
 		p++;
+		bAlreadyInList = FALSE;
 		PPERFDATA pPData = (PPERFDATA)HeapAlloc(GetProcessHeap(), 0, sizeof(PERFDATA));
 
 		/* Check to see if it's already in our list */
@@ -164,10 +168,11 @@ void CProcesses::RefreshProc(PERFDATA *p)
 		
 		if(bAlreadyInList)
 			continue;
-
+		
+		pPData = (PPERFDATA)HeapAlloc(GetProcessHeap(), 0, sizeof(PERFDATA));
 		wcscpy(pPData->ImageName, p->ImageName);
 		pPData->ProcessId = p->ProcessId;
-
+		
 		/* Add the item to the list */
 		memset(&item, 0, sizeof(LV_ITEM));
 		item.mask = LVIF_TEXT|LVIF_PARAM;			
@@ -183,7 +188,7 @@ BOOL CProcesses::ProcessRunning(DWORD ProcessId)
 	HANDLE hProcess;
 	DWORD exitCode;
 
-	if (ProcessId == 0) {
+	if (ProcessId == 0 || ProcessId == 4) {
 		return TRUE;
 	}
 
@@ -207,4 +212,20 @@ void CProcesses::OnTimer(UINT_PTR nIDEvent)
 	SetEvent(hProcPageEvent);
 
 	CDialogEx::OnTimer(nIDEvent);
+}
+
+
+void CProcesses::OnLvnGetdispinfoProcessList(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
+	// TODO: Add your control notification handler code here
+	*pResult = 0;
+}
+
+
+void CProcesses::OnHdnItemclickProcessList(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMHEADER phdr = reinterpret_cast<LPNMHEADER>(pNMHDR);
+	// TODO: Add your control notification handler code here
+	*pResult = 0;
 }
