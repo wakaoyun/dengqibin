@@ -14,7 +14,7 @@ IMPLEMENT_DYNAMIC(CProcesses, CDialogEx)
 CProcesses::CProcesses(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CProcesses::IDD, pParent)
 {
-
+	columns = columnMgr.GetColumns();
 }
 
 CProcesses::~CProcesses()
@@ -47,9 +47,9 @@ BOOL CProcesses::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	SetBackgroundColor(RGB(255, 255,255));
-	//m_Process.InsertColumn(0, _T("Image Name"), LVCFMT_LEFT, 100, -1);
 	hProcPageListCtrl = ::GetDlgItem(this->m_hWnd, IDC_Process_LIST);
 	columnMgr.AddColumns(hProcPageListCtrl);
+	m_Process.SetExtendedStyle(m_Process.GetExtendedStyle()|LVS_EX_FULLROWSELECT);
 
 	CreateThread(NULL, 0, ProcPageRefreshThread, NULL, 0, NULL);
 	SetTimer(1,1000,NULL);
@@ -119,10 +119,10 @@ DWORD CProcesses::ProcPageRefreshThread(void *lpParameter)
 void CProcesses::RefreshProc(PERFDATA *p)
 {
 	PPERFDATA  pPerfData = NULL;
-    LV_ITEM                       item;
-	LV_COLUMN					  colum;					
-    int                           i;
-    BOOL                          bAlreadyInList = FALSE;
+    LV_ITEM    item;
+	LV_COLUMN  colum;					
+    int        i;
+    BOOL       bAlreadyInList = FALSE;
 
     memset(&item, 0, sizeof(LV_ITEM));
 
@@ -140,9 +140,38 @@ void CProcesses::RefreshProc(PERFDATA *p)
 			(void)ListView_DeleteItem(hProcPageListCtrl, i);
 			HeapFree(GetProcessHeap(), 0, pPerfData);
 		}
+		else
+		{
+			PERFDATA *pTemp = p;
+			int count  = perfHelper.PerfDataGetProcessCount();
+			for(int j = 0; j<count;j++,pTemp++)
+			{
+				if(pTemp->ProcessId == pPerfData->ProcessId)
+				{
+					/*check the data is had changed*/
+					if(!(pPerfData->CPUUsage==pTemp->CPUUsage
+						&&pPerfData->CPUTime.HighPart==pTemp->CPUTime.HighPart
+						&&pPerfData->CPUTime.LowPart==pTemp->CPUTime.LowPart))
+					{
+						memset(pPerfData,0,sizeof(PERFDATA));
+						memcpy(pPerfData,pTemp,sizeof(PERFDATA));
+
+						/* Update the item */
+						memset(&item, 0, sizeof(LV_ITEM));
+						item.mask = LVIF_TEXT|LVIF_PARAM;			
+						item.pszText = pPerfData->ImageName;
+						item.iItem = i;
+						item.lParam = (LPARAM)pPerfData;
+						ListView_SetItem(hProcPageListCtrl, &item);	
+					}
+					break;
+				}
+			}
+		}
 	}
     
 	int count = 1;
+	/*add the processes to our list*/
 	while(count++ != perfHelper.PerfDataGetProcessCount())
 	{
 		LV_ITEM item;
@@ -170,8 +199,9 @@ void CProcesses::RefreshProc(PERFDATA *p)
 			continue;
 		
 		pPData = (PPERFDATA)HeapAlloc(GetProcessHeap(), 0, sizeof(PERFDATA));
-		wcscpy(pPData->ImageName, p->ImageName);
-		pPData->ProcessId = p->ProcessId;
+		/*wcscpy(pPData->ImageName, p->ImageName);
+		pPData->ProcessId = p->ProcessId;*/
+		memcpy(pPData,p,sizeof(PERFDATA));
 		
 		/* Add the item to the list */
 		memset(&item, 0, sizeof(LV_ITEM));
@@ -218,7 +248,75 @@ void CProcesses::OnTimer(UINT_PTR nIDEvent)
 void CProcesses::OnLvnGetdispinfoProcessList(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
-	// TODO: Add your control notification handler code here
+	
+	if(columns[pDispInfo->item.iSubItem].isShow)
+	{
+		PERFDATA *pPerfData = (PERFDATA *)pDispInfo->item.lParam;
+		switch(columns[pDispInfo->item.iSubItem].nId)
+		{
+		case COLUMN_IMAGENAME:  
+			break;
+		case COLUMN_PID:
+			swprintf_s(pDispInfo->item.pszText,pDispInfo->item.cchTextMax,_T("%d"),pPerfData->ProcessId);
+			break;
+		case COLUMN_USERNAME: 
+			pDispInfo->item.pszText = pPerfData->UserName;
+			break;
+		case COLUMN_SESSIONID:
+			swprintf_s(pDispInfo->item.pszText,pDispInfo->item.cchTextMax,_T("%d"),pPerfData->SessionId);
+			break;
+		case COLUMN_CPUUSAGE: 
+			swprintf_s(pDispInfo->item.pszText,pDispInfo->item.cchTextMax,_T("%02d"),pPerfData->CPUUsage);
+			break;
+		case COLUMN_CPUTIME:
+			DWORD dwHours;
+			DWORD dwMinutes;
+			DWORD dwSeconds;
+
+			GetHMSFromLargeInt(pPerfData->CPUTime, &dwHours, &dwMinutes, &dwSeconds);
+			swprintf_s(pDispInfo->item.pszText,pDispInfo->item.cchTextMax,_T("%02d:%02d:%02d"),dwHours,dwMinutes,dwSeconds);
+			break;
+		case COLUMN_MEMORYUSAGE: 
+			break;
+		case COLUMN_PEAKMEMORYUSAGE:  
+			break;
+		case COLUMN_MEMORYUSAGEDELTA:  
+			break;
+		case COLUMN_PAGEFAULTS: 
+			break;
+		case COLUMN_PAGEFAULTSDELTA: 
+			break;
+		case COLUMN_VIRTUALMEMORYSIZE:   
+			break;
+		case COLUMN_PAGEDPOOL: 
+			break;
+		case COLUMN_NONPAGEDPOOL: 
+			break;
+		case COLUMN_BASEPRIORITY: 
+			break;
+		case COLUMN_HANDLECOUNT: 
+			break;
+		case COLUMN_THREADCOUNT: 
+			break;
+		case COLUMN_USEROBJECTS:   
+			break;
+		case COLUMN_GDIOBJECTS: 
+			break;
+		case COLUMN_IOREADS:  
+			break;
+		case COLUMN_IOWRITES: 
+			break;
+		case COLUMN_IOOTHER:  
+			break;
+		case COLUMN_IOREADBYTES: 
+			break;
+		case COLUMN_IOWRITEBYTES: 
+			break;
+		case COLUMN_IOOTHERBYTES:  
+			break;
+		}
+	}
+
 	*pResult = 0;
 }
 
@@ -228,4 +326,17 @@ void CProcesses::OnHdnItemclickProcessList(NMHDR *pNMHDR, LRESULT *pResult)
 	LPNMHEADER phdr = reinterpret_cast<LPNMHEADER>(pNMHDR);
 	// TODO: Add your control notification handler code here
 	*pResult = 0;
+}
+
+inline void CProcesses::GetHMSFromLargeInt(LARGE_INTEGER time,DWORD *dwHours, DWORD *dwMinutes, DWORD *dwSeconds)
+{
+#ifdef _MSC_VER
+	*dwHours = (DWORD)(time.QuadPart / 36000000000L);
+	*dwMinutes = (DWORD)((time.QuadPart % 36000000000L) / 600000000L);
+	*dwSeconds = (DWORD)(((time.QuadPart % 36000000000L) % 600000000L) / 10000000L);
+#else
+	*dwHours = (DWORD)(time.QuadPart / 36000000000LL);
+	*dwMinutes = (DWORD)((time.QuadPart % 36000000000LL) / 600000000LL);
+	*dwSeconds = (DWORD)(((time.QuadPart % 36000000000LL) % 600000000LL) / 10000000LL);
+#endif
 }
