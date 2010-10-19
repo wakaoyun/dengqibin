@@ -4,11 +4,31 @@
 
 CColumnMgr::ColumnEntry defaultColums[MAX_COLUM] =
 {
-	{_T("Image Name"),100,TRUE},{_T("PID"),100,TRUE},{_T("User Name"),100,FALSE},{_T("Session ID"),100,FALSE},{_T("CPU"),100,FALSE},
-	{_T("CPU Time"),100,FALSE},{_T(""),100,FALSE},{_T(""),100,FALSE},{_T(""),100,FALSE},{_T(""),100,FALSE},
-	{_T(""),100,FALSE},{_T(""),100,FALSE},{_T(""),100,FALSE},{_T(""),100,FALSE},{_T(""),100,FALSE},
-	{_T(""),100,FALSE},{_T(""),100,FALSE},{_T(""),100,FALSE},{_T(""),100,FALSE},{_T(""),100,FALSE},
-	{_T(""),100,FALSE},{_T(""),100,FALSE},{_T(""),100,FALSE},{_T(""),100,FALSE},{_T(""),100,FALSE}
+	{_T("Image Name"),90,TRUE,COLUMN_IMAGENAME},
+	{_T("PID"),50,TRUE,COLUMN_PID},
+	{_T("User Name"),90,TRUE,COLUMN_USERNAME},
+	{_T("Session ID"),35,TRUE,COLUMN_SESSIONID},
+	{_T("CPU"),35,TRUE,COLUMN_CPUUSAGE},
+	{_T("CPU Time"),70,TRUE,COLUMN_CPUTIME},
+	{_T(""),70,FALSE,COLUMN_MEMORYUSAGE},
+	{_T(""),100,FALSE,COLUMN_PEAKMEMORYUSAGE},
+	{_T(""),70,FALSE,COLUMN_MEMORYUSAGEDELTA},
+	{_T(""),70,FALSE,COLUMN_PAGEFAULTS},
+	{_T(""),70,FALSE,COLUMN_PAGEFAULTSDELTA},
+	{_T(""),70,FALSE,COLUMN_VIRTUALMEMORYSIZE},
+	{_T(""),70,FALSE,COLUMN_PAGEDPOOL},
+	{_T(""),70,FALSE,COLUMN_NONPAGEDPOOL},
+	{_T(""),60,FALSE,COLUMN_BASEPRIORITY},
+	{_T(""),60,FALSE,COLUMN_HANDLECOUNT},
+	{_T(""),60,FALSE,COLUMN_THREADCOUNT},
+	{_T(""),60,FALSE,COLUMN_USEROBJECTS},
+	{_T(""),60,FALSE,COLUMN_GDIOBJECTS},
+	{_T(""),70,FALSE,COLUMN_IOREADS},
+	{_T(""),70,FALSE,COLUMN_IOWRITES},
+	{_T(""),70,FALSE,COLUMN_IOOTHER},
+	{_T(""),70,FALSE,COLUMN_IOREADBYTES},
+	{_T(""),70,FALSE,COLUMN_IOWRITEBYTES},
+	{_T(""),70,FALSE,COLUMN_IOOTHERBYTES}
 };
 
 CColumnMgr::CColumnMgr(void)
@@ -39,4 +59,9 @@ void CColumnMgr::AddColumns(HWND hWnd)
 			ListView_InsertColumn(hWnd, i, &column);
 		}
 	}
+}
+
+const CColumnMgr::ColumnEntry * CColumnMgr::GetColumns()
+{
+	return columns;
 }

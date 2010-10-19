@@ -25,19 +25,21 @@ protected:
 public:
 	CListCtrl m_Process;
 	virtual BOOL OnInitDialog();
-	afx_msg void OnSize(UINT nType, int cx, int cy);
 	CButton m_EndProcess;
 	CButton m_ShowAll;
 private:	
 	static DWORD WINAPI ProcPageRefreshThread(void *lpParameter);
 	static void RefreshProc(PERFDATA *P);
 	static BOOL ProcessRunning(DWORD ProcessId);
+	void GetHMSFromLargeInt(LARGE_INTEGER time,DWORD *dwHours, DWORD *dwMinutes, DWORD *dwSeconds);
 public:
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnLvnGetdispinfoProcessList(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnHdnItemclickProcessList(NMHDR *pNMHDR, LRESULT *pResult);
 private:
 	CColumnMgr columnMgr;
+	const CColumnMgr::ColumnEntry *columns;
 };
 static HANDLE   hProcPageEvent = NULL;
 static HWND hProcPageListCtrl;
