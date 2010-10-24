@@ -1,4 +1,6 @@
 #pragma once
+#include "TaskSetting.h"
+
 #define MAX_COLUM 25
 #define COLUMN_IMAGENAME            0
 #define COLUMN_PID                  1

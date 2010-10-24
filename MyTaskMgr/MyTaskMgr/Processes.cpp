@@ -8,7 +8,8 @@
 
 
 // CProcesses dialog
-	
+int CProcesses::sortColum = 0;
+BOOL CProcesses::isASC = FALSE;
 IMPLEMENT_DYNAMIC(CProcesses, CDialogEx)
 
 CProcesses::CProcesses(CWnd* pParent /*=NULL*/)
@@ -19,7 +20,8 @@ CProcesses::CProcesses(CWnd* pParent /*=NULL*/)
 
 CProcesses::~CProcesses()
 {
-
+	CTaskSetting taskSetting;
+	taskSetting.SetSortColumn(isASC,sortColum);
 }
 
 void CProcesses::DoDataExchange(CDataExchange* pDX)
@@ -36,6 +38,7 @@ BEGIN_MESSAGE_MAP(CProcesses, CDialogEx)
 	ON_WM_TIMER()
 	ON_NOTIFY(LVN_GETDISPINFO, IDC_Process_LIST, &CProcesses::OnLvnGetdispinfoProcessList)
 	ON_NOTIFY(HDN_ITEMCLICK, 0, &CProcesses::OnHdnItemclickProcessList)
+	ON_NOTIFY(NM_RCLICK, IDC_Process_LIST, &CProcesses::OnNMRClickProcessList)
 END_MESSAGE_MAP()
 
 
@@ -50,8 +53,13 @@ BOOL CProcesses::OnInitDialog()
 	hProcPageListCtrl = ::GetDlgItem(this->m_hWnd, IDC_Process_LIST);
 	columnMgr.AddColumns(hProcPageListCtrl);
 	m_Process.SetExtendedStyle(m_Process.GetExtendedStyle()|LVS_EX_FULLROWSELECT);
+	CTaskSetting taskSetting;
+	sortColum = taskSetting.GetSortColumn();
+	isASC = taskSetting.IsASC();
 
 	CreateThread(NULL, 0, ProcPageRefreshThread, NULL, 0, NULL);
+	ListView_SortItems(hProcPageListCtrl,ProcessPageCompareFunc,NULL);
+
 	SetTimer(1,1000,NULL);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -199,8 +207,6 @@ void CProcesses::RefreshProc(PERFDATA *p)
 			continue;
 		
 		pPData = (PPERFDATA)HeapAlloc(GetProcessHeap(), 0, sizeof(PERFDATA));
-		/*wcscpy(pPData->ImageName, p->ImageName);
-		pPData->ProcessId = p->ProcessId;*/
 		memcpy(pPData,p,sizeof(PERFDATA));
 		
 		/* Add the item to the list */
@@ -224,7 +230,10 @@ BOOL CProcesses::ProcessRunning(DWORD ProcessId)
 
 	hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, ProcessId);
 	if (hProcess == NULL) {
-		return FALSE;
+		hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, ProcessId);
+		if (hProcess == NULL) {
+			return FALSE;
+		}
 	}
 
 	if (GetExitCodeProcess(hProcess, &exitCode)) {
@@ -248,11 +257,16 @@ void CProcesses::OnTimer(UINT_PTR nIDEvent)
 void CProcesses::OnLvnGetdispinfoProcessList(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
-	
-	if(columns[pDispInfo->item.iSubItem].isShow)
+	LVCOLUMN  col;
+	col.mask = LVCF_SUBITEM;
+	/*Get the colum Info*/
+	ListView_GetColumn(hProcPageListCtrl,pDispInfo->item.iSubItem,&col);
+
+	if(columns[col.iSubItem].isShow)
 	{
 		PERFDATA *pPerfData = (PERFDATA *)pDispInfo->item.lParam;
-		switch(columns[pDispInfo->item.iSubItem].nId)
+		/*Set the Column Data*/
+		switch(columns[col.iSubItem].nId)
 		{
 		case COLUMN_IMAGENAME:  
 			break;
@@ -277,42 +291,86 @@ void CProcesses::OnLvnGetdispinfoProcessList(NMHDR *pNMHDR, LRESULT *pResult)
 			swprintf_s(pDispInfo->item.pszText,pDispInfo->item.cchTextMax,_T("%02d:%02d:%02d"),dwHours,dwMinutes,dwSeconds);
 			break;
 		case COLUMN_MEMORYUSAGE: 
+			swprintf_s(pDispInfo->item.pszText,pDispInfo->item.cchTextMax,_T("%d"),pPerfData->WorkingSetSizeBytes / 1024);
+			SeparateNumber(pDispInfo->item.pszText,pDispInfo->item.cchTextMax);
+			wcscat(pDispInfo->item.pszText,_T(" K"));
 			break;
-		case COLUMN_PEAKMEMORYUSAGE:  
+		case COLUMN_PEAKMEMORYUSAGE: 
+			swprintf_s(pDispInfo->item.pszText,pDispInfo->item.cchTextMax,_T("%d")
+				,pPerfData->PeakWorkingSetSizeBytes / 1024);
+			SeparateNumber(pDispInfo->item.pszText,pDispInfo->item.cchTextMax);
+			wcscat(pDispInfo->item.pszText,_T(" K"));
 			break;
-		case COLUMN_MEMORYUSAGEDELTA:  
+		case COLUMN_MEMORYUSAGEDELTA: 
+			swprintf_s(pDispInfo->item.pszText,pDispInfo->item.cchTextMax,_T("%d"),pPerfData->WorkingSetSizeDelta / 1024);
+			SeparateNumber(pDispInfo->item.pszText,pDispInfo->item.cchTextMax);
+			wcscat(pDispInfo->item.pszText,_T(" K"));
 			break;
 		case COLUMN_PAGEFAULTS: 
+			swprintf_s(pDispInfo->item.pszText,pDispInfo->item.cchTextMax,_T("%d"),pPerfData->PageFaultCount);
+			SeparateNumber(pDispInfo->item.pszText,pDispInfo->item.cchTextMax);
 			break;
 		case COLUMN_PAGEFAULTSDELTA: 
+			swprintf_s(pDispInfo->item.pszText,pDispInfo->item.cchTextMax,_T("%d"),pPerfData->PageFaultCountDelta);
+			SeparateNumber(pDispInfo->item.pszText,pDispInfo->item.cchTextMax);
 			break;
-		case COLUMN_VIRTUALMEMORYSIZE:   
+		case COLUMN_VIRTUALMEMORYSIZE: 
+			swprintf_s(pDispInfo->item.pszText,pDispInfo->item.cchTextMax,_T("%d"),pPerfData->VirtualMemorySizeBytes / 1024);
+			SeparateNumber(pDispInfo->item.pszText,pDispInfo->item.cchTextMax);
+			wcscat(pDispInfo->item.pszText,_T(" K"));
 			break;
 		case COLUMN_PAGEDPOOL: 
+			swprintf_s(pDispInfo->item.pszText,pDispInfo->item.cchTextMax,_T("%d"),pPerfData->PagedPoolUsagePages / 1024);
+			SeparateNumber(pDispInfo->item.pszText,pDispInfo->item.cchTextMax);
+			wcscat(pDispInfo->item.pszText,_T(" K"));
 			break;
 		case COLUMN_NONPAGEDPOOL: 
+			swprintf_s(pDispInfo->item.pszText,pDispInfo->item.cchTextMax,_T("%d"),pPerfData->NonPagedPoolUsagePages / 1024);
+			SeparateNumber(pDispInfo->item.pszText,pDispInfo->item.cchTextMax);
+			wcscat(pDispInfo->item.pszText,_T(" K"));
 			break;
-		case COLUMN_BASEPRIORITY: 
+		case COLUMN_BASEPRIORITY:
+			swprintf_s(pDispInfo->item.pszText,pDispInfo->item.cchTextMax,_T("%d"),pPerfData->BasePriority);
 			break;
 		case COLUMN_HANDLECOUNT: 
+			swprintf_s(pDispInfo->item.pszText,pDispInfo->item.cchTextMax,_T("%d"),pPerfData->HandleCount);
+			SeparateNumber(pDispInfo->item.pszText,pDispInfo->item.cchTextMax);
 			break;
-		case COLUMN_THREADCOUNT: 
+		case COLUMN_THREADCOUNT:
+			swprintf_s(pDispInfo->item.pszText,pDispInfo->item.cchTextMax,_T("%d"),pPerfData->ThreadCount);
+			SeparateNumber(pDispInfo->item.pszText,pDispInfo->item.cchTextMax);
 			break;
-		case COLUMN_USEROBJECTS:   
+		case COLUMN_USEROBJECTS:
+			swprintf_s(pDispInfo->item.pszText,pDispInfo->item.cchTextMax,_T("%d"),pPerfData->USERObjectCount);
+			SeparateNumber(pDispInfo->item.pszText,pDispInfo->item.cchTextMax);
 			break;
-		case COLUMN_GDIOBJECTS: 
+		case COLUMN_GDIOBJECTS:
+			swprintf_s(pDispInfo->item.pszText,pDispInfo->item.cchTextMax,_T("%d"),pPerfData->GDIObjectCount);
+			SeparateNumber(pDispInfo->item.pszText,pDispInfo->item.cchTextMax);
 			break;
-		case COLUMN_IOREADS:  
+		case COLUMN_IOREADS:
+			_ui64tow(pPerfData->IOCounters.ReadOperationCount,pDispInfo->item.pszText,10);
+			SeparateNumber(pDispInfo->item.pszText,pDispInfo->item.cchTextMax);
 			break;
-		case COLUMN_IOWRITES: 
+		case COLUMN_IOWRITES:
+			_ui64tow(pPerfData->IOCounters.WriteOperationCount,pDispInfo->item.pszText,10);
+			SeparateNumber(pDispInfo->item.pszText,pDispInfo->item.cchTextMax);
 			break;
-		case COLUMN_IOOTHER:  
+		case COLUMN_IOOTHER: 
+			_ui64tow(pPerfData->IOCounters.OtherOperationCount,pDispInfo->item.pszText,10);
+			SeparateNumber(pDispInfo->item.pszText,pDispInfo->item.cchTextMax);
 			break;
 		case COLUMN_IOREADBYTES: 
+			_ui64tow(pPerfData->IOCounters.ReadTransferCount,pDispInfo->item.pszText,10);
+			SeparateNumber(pDispInfo->item.pszText,pDispInfo->item.cchTextMax);
 			break;
 		case COLUMN_IOWRITEBYTES: 
+			_ui64tow(pPerfData->IOCounters.WriteTransferCount,pDispInfo->item.pszText,10);
+			SeparateNumber(pDispInfo->item.pszText,pDispInfo->item.cchTextMax);
 			break;
-		case COLUMN_IOOTHERBYTES:  
+		case COLUMN_IOOTHERBYTES: 
+			_ui64tow(pPerfData->IOCounters.OtherTransferCount,pDispInfo->item.pszText,10);
+			SeparateNumber(pDispInfo->item.pszText,pDispInfo->item.cchTextMax);
 			break;
 		}
 	}
@@ -320,11 +378,115 @@ void CProcesses::OnLvnGetdispinfoProcessList(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
+int CALLBACK CProcesses::ProcessPageCompareFunc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+{
+	PERFDATA* Param1;
+	PERFDATA* Param2;
+	int result;
+	if (isASC) {
+		Param1 = (PERFDATA *)lParam1;
+		Param2 = (PERFDATA *)lParam2;
+	} else {
+		Param1 = (PERFDATA *)lParam2;
+		Param2 = (PERFDATA *)lParam1;
+	}
+
+	switch(sortColum)
+	{
+	case COLUMN_IMAGENAME:
+		result = _wcsicmp(Param1->ImageName, Param2->ImageName);
+		break;
+	case COLUMN_PID:
+		result = CMP(Param1->ProcessId, Param2->ProcessId);
+		break;
+	case COLUMN_USERNAME: 
+		result = _wcsicmp(Param1->UserName, Param2->UserName);
+		break;
+	case COLUMN_SESSIONID:
+		result = CMP(Param1->SessionId, Param2->SessionId);
+		break;
+	case COLUMN_CPUUSAGE: 
+		result = CMP(Param1->CPUUsage, Param2->CPUUsage);
+		break;
+	case COLUMN_CPUTIME:
+		result = 0;
+		break;
+	case COLUMN_MEMORYUSAGE: 
+		result = CMP(Param1->WorkingSetSizeBytes, Param2->WorkingSetSizeBytes);
+		break;
+	case COLUMN_PEAKMEMORYUSAGE: 
+		result = CMP(Param1->PeakWorkingSetSizeBytes, Param2->PeakWorkingSetSizeBytes);
+		break;
+	case COLUMN_MEMORYUSAGEDELTA:
+		result = CMP(Param1->WorkingSetSizeDelta, Param2->WorkingSetSizeDelta);
+		break;
+	case COLUMN_PAGEFAULTS: 
+		result = CMP(Param1->PageFaultCount, Param2->PageFaultCount);
+		break;
+	case COLUMN_PAGEFAULTSDELTA: 
+		result = CMP(Param1->PageFaultCountDelta, Param2->PageFaultCountDelta);
+		break;
+	case COLUMN_VIRTUALMEMORYSIZE: 
+		result = CMP(Param1->VirtualMemorySizeBytes, Param2->VirtualMemorySizeBytes);
+		break;
+	case COLUMN_PAGEDPOOL:
+		result = CMP(Param1->PagedPoolUsagePages, Param2->PagedPoolUsagePages);
+		break;
+	case COLUMN_NONPAGEDPOOL:
+		result = CMP(Param1->NonPagedPoolUsagePages, Param2->NonPagedPoolUsagePages);
+		break;
+	case COLUMN_BASEPRIORITY:
+		result = CMP(Param1->BasePriority, Param2->BasePriority);
+		break;
+	case COLUMN_HANDLECOUNT: 
+		result = CMP(Param1->HandleCount, Param2->HandleCount);
+		break;
+	case COLUMN_THREADCOUNT:
+		result = CMP(Param1->ThreadCount, Param2->ThreadCount);
+		break;
+	case COLUMN_USEROBJECTS:
+		result = CMP(Param1->USERObjectCount, Param2->USERObjectCount);
+		break;
+	case COLUMN_GDIOBJECTS:
+		result = CMP(Param1->GDIObjectCount, Param2->GDIObjectCount);
+		break;
+	case COLUMN_IOREADS:
+		result = CMP(Param1->IOCounters.ReadOperationCount, Param2->IOCounters.ReadOperationCount);
+		break;
+	case COLUMN_IOWRITES:
+		result = CMP(Param1->IOCounters.WriteOperationCount, Param2->IOCounters.WriteOperationCount);
+		break;
+	case COLUMN_IOOTHER: 
+		result = CMP(Param1->IOCounters.OtherOperationCount, Param2->IOCounters.OtherOperationCount);
+		break;
+	case COLUMN_IOREADBYTES: 
+		result = CMP(Param1->IOCounters.ReadTransferCount, Param2->IOCounters.ReadTransferCount);
+		break;
+	case COLUMN_IOWRITEBYTES: 
+		result = CMP(Param1->IOCounters.WriteTransferCount, Param2->IOCounters.WriteTransferCount);
+		break;
+	case COLUMN_IOOTHERBYTES: 
+		result = CMP(Param1->IOCounters.OtherTransferCount, Param2->IOCounters.OtherTransferCount);
+		break;
+	}
+
+	return result;
+}
 
 void CProcesses::OnHdnItemclickProcessList(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMHEADER phdr = reinterpret_cast<LPNMHEADER>(pNMHDR);
-	// TODO: Add your control notification handler code here
+	
+	LVCOLUMN  col;
+	col.mask = LVCF_SUBITEM;
+	/*Get the colum Info*/
+	ListView_GetColumn(hProcPageListCtrl,phdr->iItem,&col);
+
+	sortColum = col.iSubItem;
+	isASC = !isASC;
+
+	ListView_SortItems(hProcPageListCtrl,ProcessPageCompareFunc,NULL);
+
 	*pResult = 0;
 }
 
@@ -339,4 +501,28 @@ inline void CProcesses::GetHMSFromLargeInt(LARGE_INTEGER time,DWORD *dwHours, DW
 	*dwMinutes = (DWORD)((time.QuadPart % 36000000000LL) / 600000000LL);
 	*dwSeconds = (DWORD)(((time.QuadPart % 36000000000LL) % 600000000LL) / 10000000LL);
 #endif
+}
+
+void CProcesses::SeparateNumber(LPWSTR strNumber, int nMaxCount)
+{
+	WCHAR  temp[260];
+	UINT   i, j, k;
+
+	for (i=0,j=0; i<(wcslen(strNumber) % 3); i++, j++)
+		temp[j] = strNumber[i];
+	for (k=0; i<wcslen(strNumber); i++,j++,k++) {
+		if ((k % 3 == 0) && (j > 0))
+			temp[j++] = L',';
+		temp[j] = strNumber[i];
+	}
+	temp[j] = L'\0';
+	wcsncpy(strNumber, temp, nMaxCount);
+}
+
+void CProcesses::OnNMRClickProcessList(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	
+
+	*pResult = 0;
 }
