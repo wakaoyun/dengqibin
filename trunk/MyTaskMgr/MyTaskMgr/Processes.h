@@ -3,8 +3,10 @@
 #include "afxwin.h"
 #include "PerformanceHelper.h"
 #include "ColumnMgr.h"
+#include "TaskSetting.h"
 
 
+#define CMP(x1, x2) (x1 < x2 ? -1 : (x1 > x2 ? 1 : 0))
 // CProcesses dialog
 
 class CProcesses : public CDialogEx
@@ -31,7 +33,9 @@ private:
 	static DWORD WINAPI ProcPageRefreshThread(void *lpParameter);
 	static void RefreshProc(PERFDATA *P);
 	static BOOL ProcessRunning(DWORD ProcessId);
+	static int CALLBACK ProcessPageCompareFunc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort);
 	void GetHMSFromLargeInt(LARGE_INTEGER time,DWORD *dwHours, DWORD *dwMinutes, DWORD *dwSeconds);
+	void SeparateNumber(LPWSTR strNumber, int nMaxCount);
 public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
@@ -40,6 +44,10 @@ public:
 private:
 	CColumnMgr columnMgr;
 	const CColumnMgr::ColumnEntry *columns;
+	static int sortColum;
+	static BOOL isASC;
+public:
+	afx_msg void OnNMRClickProcessList(NMHDR *pNMHDR, LRESULT *pResult);
 };
 static HANDLE   hProcPageEvent = NULL;
 static HWND hProcPageListCtrl;
