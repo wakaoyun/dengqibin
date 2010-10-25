@@ -125,11 +125,13 @@ void CServices::GetServiceInfo()
 	DWORD dwError=0;
 	LPENUM_SERVICE_STATUS st;
 	LPQUERY_SERVICE_CONFIG lpsc;
+	CServices::PSERVICEINFO pServiceInfo;
 	if(!EnumServicesStatus(sc,SERVICE_WIN32,SERVICE_STATE_ALL, NULL,0,&size,&ret, NULL))
 	{		
 		st = (LPENUM_SERVICE_STATUS)LocalAlloc(LPTR,(SIZE_T)size);
 		EnumServicesStatus(sc,SERVICE_WIN32,SERVICE_STATE_ALL, st,size,&size,&ret,NULL);
 	}
+	pServiceInfo = (CServices::PSERVICEINFO)LocalAlloc(LPTR,(SIZE_T)(ret * sizeof(SERVICEINFO)));
 	for (int i=0; i<ret; i++)
 	{
 		hSCCervice = OpenService(sc, st[i].lpServiceName, SERVICE_QUERY_CONFIG);
@@ -138,19 +140,23 @@ void CServices::GetServiceInfo()
 			CloseServiceHandle(sc);
 			return;
 		}
-		if(!QueryServiceConfig(sc, NULL, 0, &size))
+		if(!QueryServiceConfig(hSCCervice, NULL, 0, &size))
 		{
 			dwError = GetLastError();
 			if(ERROR_INSUFFICIENT_BUFFER == dwError)
 			{
 				lpsc = (LPQUERY_SERVICE_CONFIG)LocalAlloc(LPTR,(SIZE_T)size);
-				QueryServiceConfig(sc, lpsc, size, &size);
+				QueryServiceConfig(hSCCervice, lpsc, size, &size);
 			}else{
 				goto cleanup;
 			}
 		}
+		pServiceInfo->ServiceStatus = st[i];
+		wcscpy(pServiceInfo->OrderGroup,lpsc->lpLoadOrderGroup);
+		pServiceInfo++;
 	}	
 
 cleanup:
 	CloseServiceHandle(sc);
+	CloseServiceHandle(hSCCervice);
 }

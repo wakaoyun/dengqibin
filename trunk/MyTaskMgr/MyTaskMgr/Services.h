@@ -12,7 +12,7 @@ class CServices : public CDialogEx
 	{
 		HANDLE				 ProcessId;
 		ENUM_SERVICE_STATUSW ServiceStatus;
-		LPTSTR				 lpLoadOrderGroup;
+		WCHAR				 OrderGroup[128];
 	}SERVICEINFO, *PSERVICEINFO;
 	DECLARE_DYNAMIC(CServices)
 
