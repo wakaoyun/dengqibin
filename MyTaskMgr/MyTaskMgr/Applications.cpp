@@ -304,7 +304,7 @@ void CApplications::OnGetdispinfoApplicationList(NMHDR *pNMHDR, LRESULT *pResult
 	NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
 
 	LPAPPLICATION_PAGE_LIST_ITEM  pAPLI;	
-	if(pDispInfo->item.iSubItem = 1)
+	if(pDispInfo->item.iSubItem == 1)
 	{
 		pAPLI = (LPAPPLICATION_PAGE_LIST_ITEM) pDispInfo->item.lParam;
 		if(pAPLI->bHung)

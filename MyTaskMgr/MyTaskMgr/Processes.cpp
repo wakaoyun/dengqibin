@@ -127,8 +127,7 @@ DWORD CProcesses::ProcPageRefreshThread(void *lpParameter)
 void CProcesses::RefreshProc(PERFDATA *p)
 {
 	PPERFDATA  pPerfData = NULL;
-    LV_ITEM    item;
-	LV_COLUMN  colum;					
+    LV_ITEM    item;				
     int        i;
     BOOL       bAlreadyInList = FALSE;
 

@@ -37,6 +37,7 @@ public:
 		int width;
 		BOOL isShow;
 		int nId;
+		BOOL isRight;
 	}ColumnEntry;
 public:
 	CColumnMgr(void);
