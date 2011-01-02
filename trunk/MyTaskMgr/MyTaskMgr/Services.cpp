@@ -322,7 +322,6 @@ int CALLBACK ServiceCompareFunc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSor
 
 void CServices::OnTimer(UINT_PTR nIDEvent)
 {
-	GetServiceInfo();
 	SetEvent(hServicePageEvent);
 
 	CDialogEx::OnTimer(nIDEvent);
