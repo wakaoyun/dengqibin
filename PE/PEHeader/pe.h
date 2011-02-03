@@ -46,8 +46,8 @@ public:
 	DWORD dwMessageBoxAddress;
 	BOOL WriteMessageBox(int ret,long offset, CString strCap,CString strTxt);
 	BOOL WriteNewEntry(int ret,long offset,DWORD dwAddress);
-	void WritePe(CString strFileName,CString strMsg);
-	void ModifyPe(CString strFileName,CString strMsg);
+	BOOL WritePe(CString strFileName,CString strMsg);
+	BOOL ModifyPe(CString strFileName,CString strMsg);
 	void CalcAddress(const void *base);
 	Cpe();
 	virtual ~Cpe();

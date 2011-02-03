@@ -2,11 +2,23 @@
 #include <iostream>
 using namespace std;
 
-int main()
+int main(int argc, char* argv[])
 {
-	cout<<"fdsafdsa"<<endl;
+	if(argc<2)
+	{
+		cout<<"Please Input The File Path"<<endl;
+		return 0;
+	}
+	if(argc<3)
+	{
+		cout<<"Please Input The Alert Message"<<endl;
+		return 0;
+	}
 	Cpe pe;
-	pe.ModifyPe((CString)"d:\\calc.exe",(CString)"We are the world!");
-	cout<<"aaaaaaaaaaaaa"<<endl;
+	if(pe.ModifyPe((CString)argv[1],(CString)argv[2]))
+	{
+		cout<<"Modify Success, Please Run The Application. "<<endl;
+	}
+	
 	return 0;
 }

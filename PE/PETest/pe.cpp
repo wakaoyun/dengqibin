@@ -142,7 +142,7 @@ void Cpe::WritePe(CString strFileName, CString strMsg)
 		_close(ret);
 		return;
 	}
-	if(!WriteMessageBox(ret,(long)dwEntryWrite,TEXT("Test"),TEXT("We are the world!")))
+	if(!WriteMessageBox(ret,(long)dwEntryWrite,TEXT("Alert"),TEXT(strMsg)))
 	{
 		_close(ret);
 		return;
