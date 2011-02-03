@@ -69,7 +69,7 @@ void Cpe::CalcAddress(const void *base)
 	}
 }
 
-void Cpe::ModifyPe(CString strFileName, CString strMsg)
+BOOL Cpe::ModifyPe(CString strFileName, CString strMsg)
 {	
 	HANDLE hFile,hMapping;
 	void *basepointer;
@@ -80,8 +80,8 @@ void Cpe::ModifyPe(CString strFileName, CString strMsg)
 
 	if(hFile==INVALID_HANDLE_VALUE)
 	{
-		
-		return;
+		cout<<"CreateFile failed."<<endl;
+		return FALSE;
 	}
 
 	hMapping=CreateFileMapping(hFile,NULL,PAGE_READONLY|SEC_COMMIT,0,0,NULL);
@@ -91,7 +91,7 @@ void Cpe::ModifyPe(CString strFileName, CString strMsg)
 		cout<<"Mapping failed."<<endl;
 		//MessageBox(NULL,"Mapping failed.",NULL,MB_OK);
 		CloseHandle(hFile);
-		return;
+		return FALSE;
 	}
 
 	if(!(basepointer=MapViewOfFile(hMapping,FILE_MAP_READ,0,0,0)))
@@ -100,7 +100,7 @@ void Cpe::ModifyPe(CString strFileName, CString strMsg)
 		//MessageBox(NULL,"View failed.",NULL,MB_OK);
 		CloseHandle(hMapping);
 		CloseHandle(hFile);
-		return;
+		return FALSE;
 	}
 
 	CloseHandle(hMapping);
@@ -127,13 +127,14 @@ void Cpe::ModifyPe(CString strFileName, CString strMsg)
 	{
 		cout<<"Could not open file."<<endl;
 		//MessageBox(NULL,"Could not open file.",NULL,MB_OK);
-		return;
+		return FALSE;
 	}
 
 	CloseHandle(hFile);
+	return TRUE;
 }
 
-void Cpe::WritePe(CString strFileName, CString strMsg)
+BOOL Cpe::WritePe(CString strFileName, CString strMsg)
 {
 	CString strAddress1,strAddress2;
 	int ret;
@@ -144,22 +145,23 @@ void Cpe::WritePe(CString strFileName, CString strMsg)
 	{
 		cout<<"Error open."<<endl;
 		//MessageBox(NULL,"Error open.",NULL,MB_OK);
-		return;
+		return FALSE;
 	}
 
 	if(!WriteNewEntry(ret,(long)(dwPeAddress+40),dwNewEntryAddress))
 	{
 		_close(ret);
-		return;
+		return TRUE;
 	}
 
-	if(!WriteMessageBox(ret,(long)dwEntryWrite,TEXT("Test"),TEXT("We are the world!")))
+	if(!WriteMessageBox(ret,(long)dwEntryWrite,TEXT("Alert"),TEXT(strMsg)))
 	{
 		_close(ret);
-		return;
+		return FALSE;
 	}
 
 	_close(ret);
+	return TRUE;
 }
 
 BOOL Cpe::WriteNewEntry(int ret, long offset, DWORD dwAddress)
@@ -245,7 +247,7 @@ BOOL Cpe::WriteMessageBox(int ret, long offset, CString strCap, CString strTxt)
 	}
 	
 	retf=_write(ret,cMessageBox,nTotLen);
-cout<<*cMessageBox<<"   "<<*cMsg<<endl;
+//cout<<*cMessageBox<<"   "<<*cMsg<<endl;
 	if(-1==retf)
 	{
 		delete[] cMessageBox;		
