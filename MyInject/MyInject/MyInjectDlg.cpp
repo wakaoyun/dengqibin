@@ -95,7 +95,46 @@ HCURSOR CMyInjectDlg::OnQueryDragIcon()
 {
 	return (HCURSOR) m_hIcon;
 }
+
 extern HINSTANCE _declspec(dllimport)  g_h;
+
+BOOL ExtractDLL()
+{
+	//////////////////////////////////////////// 
+	// 加载资源、生成文件 
+	//定位我们的自定义资源，这里因为我们是从本模块定位资源，所以将句柄简单地置为NULL即可 
+	HRSRC hRsrc = FindResource(NULL, MAKEINTRESOURCE(IDR_EXEANDDLL1), TEXT("EXEANDDLL"));//IDR_XXXXXX就是你刚才导入的a.exe或b.dll的ID了 
+	if (NULL == hRsrc) 
+		return FALSE; 
+	//获取资源的大小 
+	DWORD dwSize = SizeofResource(NULL, hRsrc); 
+	if (0 == dwSize) 
+		return FALSE; 
+	//加载资源 
+	HGLOBAL gl = LoadResource(NULL, hRsrc); 
+	if (NULL == gl) 
+		return FALSE; 
+	//锁定资源 
+	LPVOID lp = LockResource(gl); 
+	if (NULL == lp) 
+		return FALSE; 
+
+
+
+	CString filename="D:\\MyDll.dll";//保存的临时文件名       
+	// CREATE_ALWAYS为不管文件存不存在都产生新文件。 
+	HANDLE fp= CreateFile(filename ,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,0,NULL); 
+
+	DWORD a; 
+
+	//sizeofResource 得到资源文件的大小 
+
+	if (!WriteFile (fp,lp,dwSize,&a,NULL)) 
+		return false; 
+
+	CloseHandle (fp);//关闭句柄 
+	FreeResource (gl);//释放内存
+}
 
 void CMyInjectDlg::OnInject() 
 {
@@ -107,9 +146,11 @@ void CMyInjectDlg::OnInject()
 	char path[256];
 	HWND hWnd;
 
+	ExtractDLL();
+
 	_getcwd(path,256);
-	strcat(path,"\\MyDll.dll");//获得注入的Dll路径
-	/*strcpy(path,"D:\\Workspace\\Projects\\MyInject\\MyDll\\Debug\\MyDll.dll");*/
+	//strcat(path,"\\MyDll.dll");//获得注入的Dll路径
+	strcpy(path,"D:\\MyDll.dll");
 	len=strlen(path);
 	
 	if(!UpLevel())
@@ -128,25 +169,32 @@ void CMyInjectDlg::OnInject()
 	if(!pAddress)
 	{
 		MessageBox("分配内存地址失败!");
+		CloseHandle(hProcess);
 		return;
 	}
 	if(!WriteProcessMemory(hProcess,pAddress,path,len,NULL))
 	{
 		MessageBox("写入内存失败!");
+		CloseHandle(hProcess);
+		VirtualFree(pAddress,len,MEM_DECOMMIT);
 		return;
 	}
 	pFn=GetProcAddress(GetModuleHandle(TEXT("Kernel32.dll")),"LoadLibraryA");
 	if(!pFn)
 	{
 		MessageBox("获取LoadLibraryA失败!");
+		CloseHandle(hProcess);
+		VirtualFree(pAddress,len,MEM_DECOMMIT);
 		return;
 	}
 	hRemoteThread=CreateRemoteThread(hProcess,NULL,0,
-									(DWORD (__stdcall *)(void *))pFn,
-									pAddress,0,&threadID);
+		(DWORD (__stdcall *)(void *))pFn,
+		pAddress,0,&threadID);
 	if(NULL==hRemoteThread)
 	{
 		MessageBox("创建远程线程失败!");
+		CloseHandle(hProcess);
+		VirtualFree(pAddress,len,MEM_DECOMMIT);
 		return;
 	}
 	typedef BOOL (__stdcall * SetHook)(HWND);
@@ -241,12 +289,14 @@ void CMyInjectDlg::OnChangeEDITProcess()
 BOOL FreeRemoteModule(DWORD Pid,LPWSTR Module)
 {
 	//打开目标进程,需要的3种权限
-	HANDLE hProcess = OpenProcess(PROCESS_CREATE_THREAD|PROCESS_VM_OPERATION|PROCESS_VM_WRITE, FALSE, Pid);
+	HANDLE hProcess = OpenProcess(/*PROCESS_CREATE_THREAD|PROCESS_VM_OPERATION|PROCESS_VM_WRITE*/
+		PROCESS_ALL_ACCESS, FALSE, Pid);
 	if(hProcess==0)
 		return FALSE;
 
 	//在目标进程分配内存并将欲卸载的模块名写入
-	DWORD len=(DWORD)wcslen(Module)*sizeof(WCHAR)+1,wlen=0;
+	DWORD len=(DWORD)wcslen(Module)*sizeof(WCHAR)+1;
+	DWORD wlen=0;
 	void* lpBuf=VirtualAllocEx(hProcess, NULL, len, MEM_COMMIT, PAGE_READWRITE);
 	if(lpBuf==NULL)
 	{
@@ -263,12 +313,13 @@ BOOL FreeRemoteModule(DWORD Pid,LPWSTR Module)
 	DWORD dwHandle,ret;
 	HANDLE hThread;
 	LPVOID pFunc;
-
+	
 	///////////////////////////////////
 	///dwHandle=GetModuleHandle(Module)
 	///////////////////////////////////
 	pFunc= GetModuleHandle;
 	hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)pFunc, lpBuf, 0, NULL);
+	
 	// 等待GetModuleHandle运行完毕
 	ret=WaitForSingleObject(hThread, INFINITE);
 	// 获得GetModuleHandle的返回值
@@ -280,6 +331,7 @@ BOOL FreeRemoteModule(DWORD Pid,LPWSTR Module)
 	///////////////////////////////////////
 	//FreeLibrary(dwHandle);
 	///////////////////////////////////////
+	hThread=0;
 	pFunc = FreeLibrary;
 	hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)pFunc, (LPVOID)dwHandle, 0, NULL);
 	// 等待FreeLibrary卸载完毕
@@ -296,7 +348,10 @@ void CMyInjectDlg::OnBUTTONConcel()
 	UnHook unHook;
 	unHook=(UnHook)GetProcAddress(g_h,"UnHook");
 	unHook();
-	FreeRemoteModule(processID,L"MyDll.dll");
+	if(!FreeRemoteModule(processID,L"D:\\Workspace\\Projects\\MyInject\\Debug\\MyDll.dll"))
+	{
+		MessageBox(_T("取消注入失败"));
+	}
 	CButton* pButton = (CButton *)GetDlgItem(IDC_Inject);   
 	pButton->EnableWindow(true); 
 	pButton = (CButton *)GetDlgItem(IDC_BUTTON_Concel); 
