@@ -4,7 +4,7 @@
 
 #define STATUS_SUCCESS ((NTSTATUS)0x00000000L)
 // CUsers dialog
-
+ 
 class CUsers : public CDialogEx
 {
 public:

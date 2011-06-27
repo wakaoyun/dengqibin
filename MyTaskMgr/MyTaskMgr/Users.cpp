@@ -14,7 +14,7 @@ IMPLEMENT_DYNAMIC(CUsers, CDialogEx)
 CUsers::CUsers(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CUsers::IDD, pParent)
 {
-
+ 
 }
 
 CUsers::~CUsers()
