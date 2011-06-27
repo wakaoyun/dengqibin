@@ -148,6 +148,7 @@ BOOL CSkill::OnInitDialog()
 	m_List_Monster.InsertColumn(1,_T("距离"),LVCFMT_LEFT,50,-1);
 	m_List_Monster.InsertColumn(2,_T("怪物种类"),LVCFMT_LEFT,20,-1);
 	m_List_Monster.InsertColumn(3,_T("基址"),LVCFMT_LEFT,80,-1);
+	m_List_Monster.InsertColumn(4,_T("是否死完"),LVCFMT_LEFT,50,-1);
 	m_List_Monster.Invalidate();
 
 	GetPlayerSkillList();
@@ -212,7 +213,7 @@ DWORD WINAPI ThreadProc(LPVOID lpParameter)
 				Sleep(skillList[0].coolingTime);
 				UseSkill(skillList[0].id,pplayerInfo->selectedMonsterID);
 				Sleep(skillList[0].coolingTime);
-				while (pplayerInfo->selectedMonsterID != 0)//怪没死继续用技能
+				while (pplayerInfo->selectedMonsterID!= 0)//怪没死继续用技能
 				{
 					UseSkill(skillList[0].id,pplayerInfo->selectedMonsterID);
 					Sleep(skillList[0].coolingTime);
@@ -304,23 +305,25 @@ void /*CSkill::*/SelectMonster(DWORD monsterID)
 
 void CSkill::OnBnClickedButtonRefresh()
 {
-	//GetMonsterList();
-	//m_List_Monster.DeleteAllItems();
-	//CString temp;
-	//int count=0;
-	//for (int i=0;i<15;++i)
-	//{
-	//	temp.Format("%x",monsterList[i].id);
-	//	m_List_Monster.InsertItem(count++,temp);
-	//	temp.Format("%f",monsterList[i].dx);
-	//	m_List_Monster.SetItemText(count-1,1,temp);
-	//	temp.Format("%x",monsterList[i].type);
-	//	m_List_Monster.SetItemText(count-1,2,temp);
-	//	/*temp.Format("%x",mosterBaseAddr);
-	//	m_List_Monster.SetItemText(count-1,3,temp);	*/
-	//}
+	GetMonsterList();
+	m_List_Monster.DeleteAllItems();
+	CString temp;
+	int count=0;
+	for (int i=0;i<sizeof(monsterList) / sizeof(monsterList[0]);++i)
+	{
+		temp.Format("%x",monsterList[i].id);
+		m_List_Monster.InsertItem(count++,temp);
+		temp.Format("%f",monsterList[i].dx);
+		m_List_Monster.SetItemText(count-1,1,temp);
+		temp.Format("%x",monsterList[i].type);
+		m_List_Monster.SetItemText(count-1,2,temp);
+		temp.Format("%x",monsterList);
+		m_List_Monster.SetItemText(count-1,3,temp);	
+		temp.Format("%x",monsterList[i].isDie);
+		m_List_Monster.SetItemText(count-1,4,temp);	
+	}
 
-	GetItemList(); 
+	/*GetItemList(); */
 }
 
 void CSkill::OnLvnColumnclickListMonster(NMHDR *pNMHDR, LRESULT *pResult)
@@ -444,6 +447,6 @@ void CSkill::GetItemList(void)
 		temp.Format("%x",pItemData->sysNo);
 		m_List_Monster.SetItemText(count-1,2,temp);
 		temp.Format("%x",itemBaseAddr);
-		m_List_Monster.SetItemText(count-1,3,temp);		
+		m_List_Monster.SetItemText(count-1,3,temp);	
 	}
 }
